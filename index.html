@@ -1,153 +1,136 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="es">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2299.3">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Times; -webkit-text-stroke: #000000}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Times; -webkit-text-stroke: #000000; min-height: 14.0px}
-    span.s1 {font-kerning: none}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FIDS CUCEA - Programación en Vivo</title>
+    <style>
+        /* --- 1. CONFIGURACIÓN DEL FONDO --- */
+        body {
+            /* IMPORTANTE: Google Drive a veces bloquea el acceso directo. 
+               Si no ves tu imagen, súbela a Imgur.com y pega aquí el link .png */
+            background-image: url('https://lh3.googleusercontent.com/d/15PfdBzPzKhcW8CUeBwGF7YVaJC8Knh6S');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-color: #030a1a; /* Color de respaldo si la imagen falla */
+            
+            color: white;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        /* --- 2. CONTENEDOR DE LA TABLA (TRANSPARENTE) --- */
+        #fids-container {
+            margin-top: 160px; /* Ajusta este número para que los datos bajen a las líneas de tu imagen */
+            padding: 0 40px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed; /* Mantiene las columnas alineadas */
+        }
+
+        /* Ocultamos los encabezados de texto si tu imagen ya los tiene dibujados */
+        th {
+            display: none; 
+        }
+
+        /* --- 3. ESTILO DE LAS FILAS DE DATOS --- */
+        td {
+            padding: 10px 5px;
+            font-size: 22px; /* Tamaño ideal para Fire TV */
+            font-weight: 500;
+            color: #ffffff;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05); /* Línea divisoria casi invisible */
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            height: 45px; /* Altura fija para que coincida con tus 15 líneas */
+        }
+
+        /* Colores específicos por columna (opcional) */
+        td:nth-child(1) { color: #ffd700; font-weight: bold; width: 80px; } /* Hora o NRC en Dorado */
+        
+        /* Reloj Flotante */
+        .reloj {
+            position: absolute;
+            top: 35px;
+            right: 50px;
+            font-size: 32px;
+            font-weight: bold;
+            color: #ffd700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+    </style>
 </head>
 <body>
-<p class="p1"><span class="s1">&lt;!DOCTYPE html&gt;</span></p>
-<p class="p1"><span class="s1">&lt;html lang="es"&gt;</span></p>
-<p class="p1"><span class="s1">&lt;head&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;meta charset="UTF-8"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;title&gt;FIDS CUCEA - Programación en Vivo&lt;/title&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;style&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>/* --- 1. CONFIGURACIÓN DEL FONDO --- */</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>body {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>/* IMPORTANTE: Google Drive a veces bloquea el acceso directo.<span class="Apple-converted-space"> </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">               </span>Si no ves tu imagen, súbela a Imgur.com y pega aquí el link .png */</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>background-image: url('https://lh3.googleusercontent.com/d/15PfdBzPzKhcW8CUeBwGF7YVaJC8Knh6S');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>background-size: cover;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>background-position: center;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>background-repeat: no-repeat;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>background-attachment: fixed;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>background-color: #030a1a; /* Color de respaldo si la imagen falla */</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>color: white;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>margin: 0;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>padding: 0;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>overflow: hidden;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>/* --- 2. CONTENEDOR DE LA TABLA (TRANSPARENTE) --- */</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>#fids-container {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>margin-top: 160px; /* Ajusta este número para que los datos bajen a las líneas de tu imagen */</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>padding: 0 40px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>width: 100%;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>box-sizing: border-box;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>table {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>width: 100%;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>border-collapse: collapse;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>table-layout: fixed; /* Mantiene las columnas alineadas */</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>/* Ocultamos los encabezados de texto si tu imagen ya los tiene dibujados */</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>th {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>display: none;<span class="Apple-converted-space"> </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>/* --- 3. ESTILO DE LAS FILAS DE DATOS --- */</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>td {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>padding: 10px 5px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>font-size: 22px; /* Tamaño ideal para Fire TV */</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>font-weight: 500;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>color: #ffffff;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>border-bottom: 1px solid rgba(255, 255, 255, 0.05); /* Línea divisoria casi invisible */</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>white-space: nowrap;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>overflow: hidden;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>text-overflow: ellipsis;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>height: 45px; /* Altura fija para que coincida con tus 15 líneas */</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>/* Colores específicos por columna (opcional) */</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>td:nth-child(1) { color: #ffd700; font-weight: bold; width: 80px; } /* Hora o NRC en Dorado */</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">        </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>/* Reloj Flotante */</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.reloj {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>position: absolute;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>top: 35px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>right: 50px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>font-size: 32px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>font-weight: bold;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>color: #ffd700;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>text-shadow: 2px 2px 4px rgba(0,0,0,0.5);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/style&gt;</span></p>
-<p class="p1"><span class="s1">&lt;/head&gt;</span></p>
-<p class="p1"><span class="s1">&lt;body&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;div id="reloj" class="reloj"&gt;00:00:00&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;div id="fids-container"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div id="tabla-datos"&gt;Cargando programación...&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;script&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>// 1. TU ENLACE CSV DE GOOGLE SHEETS</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTtJ6ZlMM6skUMzxHY2LYmtU3WBojxBxxP1k7_exlFwS4THkhsC9OAt6Iq4NjxoXDvnugZwRzTjA9ZI/pub?gid=1178925333&amp;single=true&amp;output=csv';</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>// 2. CONFIGURACIÓN DE VISUALIZACIÓN</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>const maxFilas = 15; // Exactamente las 15 que pediste</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>async function cargarDatos() {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>try {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>// El timestamp '&amp;t=' evita que el Fire Stick guarde caché viejo</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>const respuesta = await fetch(csvUrl + '&amp;t=' + Date.now());</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>const texto = await respuesta.text();</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>const filas = texto.split('\n');</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>let tablaHTML = '&lt;table&gt;&lt;tbody&gt;';</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>// Empezamos en i=1 para saltar el encabezado de Google Sheets</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>for (let i = 1; i &lt;= maxFilas; i++) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>if (filas[i]) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>const columnas = filas[i].split(',');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>tablaHTML += '&lt;tr&gt;';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>columnas.forEach(col =&gt; {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>tablaHTML += `&lt;td&gt;${col.trim()}&lt;/td&gt;`;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>});</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>tablaHTML += '&lt;/tr&gt;';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>} else {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>// Si hay menos de 15 filas, crea filas vacías para mantener el diseño</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>tablaHTML += '&lt;tr style="height:45px"&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>tablaHTML += '&lt;/tbody&gt;&lt;/table&gt;';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>document.getElementById('tabla-datos').innerHTML = tablaHTML;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>} catch (error) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>console.error("Error al obtener CSV:", error);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>// Reloj en tiempo real</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>function actualizarReloj() {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const ahora = new Date();</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>document.getElementById('reloj').innerText = ahora.toLocaleTimeString();</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>// Ejecución</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>actualizarReloj();</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>setInterval(actualizarReloj, 1000);</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">        </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>cargarDatos();</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>setInterval(cargarDatos, 60000); // Actualiza datos cada minuto</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/script&gt;</span></p>
-<p class="p1"><span class="s1">&lt;/body&gt;</span></p>
-<p class="p1"><span class="s1">&lt;/html&gt;</span></p>
+
+    <div id="reloj" class="reloj">00:00:00</div>
+
+    <div id="fids-container">
+        <div id="tabla-datos">Cargando programación...</div>
+    </div>
+
+    <script>
+        // 1. TU ENLACE CSV DE GOOGLE SHEETS
+        const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTtJ6ZlMM6skUMzxHY2LYmtU3WBojxBxxP1k7_exlFwS4THkhsC9OAt6Iq4NjxoXDvnugZwRzTjA9ZI/pub?gid=1178925333&single=true&output=csv';
+
+        // 2. CONFIGURACIÓN DE VISUALIZACIÓN
+        const maxFilas = 15; // Exactamente las 15 que pediste
+
+        async function cargarDatos() {
+            try {
+                // El timestamp '&t=' evita que el Fire Stick guarde caché viejo
+                const respuesta = await fetch(csvUrl + '&t=' + Date.now());
+                const texto = await respuesta.text();
+                const filas = texto.split('\n');
+                
+                let tablaHTML = '<table><tbody>';
+
+                // Empezamos en i=1 para saltar el encabezado de Google Sheets
+                for (let i = 1; i <= maxFilas; i++) {
+                    if (filas[i]) {
+                        const columnas = filas[i].split(',');
+                        tablaHTML += '<tr>';
+                        columnas.forEach(col => {
+                            tablaHTML += `<td>${col.trim()}</td>`;
+                        });
+                        tablaHTML += '</tr>';
+                    } else {
+                        // Si hay menos de 15 filas, crea filas vacías para mantener el diseño
+                        tablaHTML += '<tr style="height:45px"><td></td><td></td><td></td><td></td><td></td></tr>';
+                    }
+                }
+
+                tablaHTML += '</tbody></table>';
+                document.getElementById('tabla-datos').innerHTML = tablaHTML;
+
+            } catch (error) {
+                console.error("Error al obtener CSV:", error);
+            }
+        }
+
+        // Reloj en tiempo real
+        function actualizarReloj() {
+            const ahora = new Date();
+            document.getElementById('reloj').innerText = ahora.toLocaleTimeString();
+        }
+
+        // Ejecución
+        actualizarReloj();
+        setInterval(actualizarReloj, 1000);
+        
+        cargarDatos();
+        setInterval(cargarDatos, 60000); // Actualiza datos cada minuto
+
+    </script>
 </body>
 </html>
