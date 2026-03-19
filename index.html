@@ -7,38 +7,23 @@
     <style>
         /* --- 1. CONFIGURACIÓN DEL FONDO --- */
         body {
-            /* 1. Mantenemos tu imagen de Google Drive o el link directo */
             background-image: url('https://lh3.googleusercontent.com/d/15PfdBzPzKhcW8CUeBwGF7YVaJC8Knh6S');
-            
-            /* 2. FIJAR TAMAÑO EXACTO */
-            /* Opción A (Píxeles): Control total. Si tu foto es para una tele 1080p, pon 1920px. 
-               Ajusta este número si se ve muy grande. */
             background-size: 1920px auto; 
-        
-            /* Opción B (Porcentaje): Se adapta un poco más a la tele, pero mantiene proporción. */
-            /* background-size: 100% auto; */ 
-        
-            /* 3. ALINEAR ARRIBA A LA IZQUIERDA */
             background-position: top left;
-            
-            /* 4. EVITAR QUE SE REPTITA */
             background-repeat: no-repeat;
-            
-            /* 5. FONDO DE RESPALDO (Si la imagen falla o es más chica que la tele) */
             background-color: #030a1a; 
-            background-attachment: fixed; /* Mantiene el fondo quieto al hacer scroll (opcional) */
-            
-            /* ... resto de propiedades de body (color, font, margin, overflow) ... */
+            background-attachment: fixed;
             color: white;
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
             padding: 0;
             overflow: hidden;
         }
-        /* --- 2. CONTENEDOR DE LA TABLA (TRANSPARENTE) --- */
+
+        /* --- 2. CONTENEDOR DE LA TABLA --- */
         #fids-container {
-            margin-top: 188px; /* Ajusta este número para que los datos bajen a las líneas de tu imagen */
-            padding: 0 150px;
+            margin-top: 188px; 
+            padding: 0 50px; /* Ajustado para dar más espacio lateral */
             width: 100%;
             box-sizing: border-box;
         }
@@ -46,31 +31,35 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            table-layout: fixed; /* Mantiene las columnas alineadas */
+            table-layout: fixed; /* OBLIGATORIO para que los anchos en px funcionen */
         }
 
-        /* Ocultamos los encabezados de texto si tu imagen ya los tiene dibujados */
-        th {
-            display: none; 
-        }
+        th { display: none; }
 
-        /* --- 3. ESTILO DE LAS FILAS DE DATOS --- */
+        /* --- 3. ESTILO DE LAS FILAS (DOBLE LÍNEA PERMITIDA) --- */
         td {
-            padding: 10px 5px;
-            font-size: 22px; /* Tamaño ideal para Fire TV */
+            padding: 5px 10px;
+            font-size: 20px; /* Bajamos un poco el tamaño para que quepan 2 líneas bien */
             font-weight: 500;
             color: #ffffff;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05); /* Línea divisoria casi invisible */
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            height: 40px; /* Altura fija para que coincida con tus 15 líneas */
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            
+            /* --- AJUSTES PARA DOBLE LÍNEA --- */
+            white-space: normal;      /* Permite saltos de línea */
+            word-wrap: break-word;    /* Rompe palabras largas si es necesario */
+            vertical-align: top;      /* Alinea el texto arriba para que no flote en medio */
+            height: 55px;             /* Aumentamos un poco la altura fija para la doble línea */
+            line-height: 1.1;         /* Espacio entre renglones de la misma celda */
         }
 
-        /* Colores específicos por columna (opcional) */
-        td:nth-child(1) { color: #ffd700; font-weight: bold; width: 80px; } /* Hora o NRC en Dorado */
-        
-        /* Reloj Flotante */
+        /* --- 4. ANCHOS DE COLUMNA FIJOS EN PÍXELES --- */
+        /* Ajusta estos números según tu imagen de fondo */
+        td:nth-child(1) { width: 120px; color: #ffd700; font-weight: bold; } /* Hora */
+        td:nth-child(2) { width: 450px; } /* Materia (la más ancha) */
+        td:nth-child(3) { width: 100px; } /* NRC o ID */
+        td:nth-child(4) { width: 350px; } /* Profesor */
+        td:nth-child(5) { width: 150px; } /* Aula/Edificio */
+
         .reloj {
             position: absolute;
             top: 35px;
@@ -92,33 +81,28 @@
     </div>
 
     <script>
-        // 1. TU ENLACE CSV DE GOOGLE SHEETS
         const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTtJ6ZlMM6skUMzxHY2LYmtU3WBojxBxxP1k7_exlFwS4THkhsC9OAt6Iq4NjxoXDvnugZwRzTjA9ZI/pub?gid=1178925333&single=true&output=csv';
-
-        // 2. CONFIGURACIÓN DE VISUALIZACIÓN
-        const maxFilas = 16; // Exactamente las 15 que pediste
+        const maxFilas = 16; 
 
         async function cargarDatos() {
             try {
-                // El timestamp '&t=' evita que el Fire Stick guarde caché viejo
                 const respuesta = await fetch(csvUrl + '&t=' + Date.now());
                 const texto = await respuesta.text();
                 const filas = texto.split('\n');
                 
                 let tablaHTML = '<table><tbody>';
 
-                // Empezamos en i=1 para saltar el encabezado de Google Sheets
                 for (let i = 1; i <= maxFilas; i++) {
                     if (filas[i]) {
                         const columnas = filas[i].split(',');
                         tablaHTML += '<tr>';
-                        columnas.forEach(col => {
-                            tablaHTML += `<td>${col.trim()}</td>`;
-                        });
+                        // Solo tomamos las primeras 5 columnas para asegurar que el ancho no se rompa
+                        for(let j=0; j<5; j++) {
+                            tablaHTML += `<td>${columnas[j] ? columnas[j].trim() : ''}</td>`;
+                        }
                         tablaHTML += '</tr>';
                     } else {
-                        // Si hay menos de 15 filas, crea filas vacías para mantener el diseño
-                        tablaHTML += '<tr style="height:40px"><td></td><td></td><td></td><td></td><td></td></tr>';
+                        tablaHTML += '<tr style="height:55px"><td></td><td></td><td></td><td></td><td></td></tr>';
                     }
                 }
 
@@ -130,18 +114,15 @@
             }
         }
 
-        // Reloj en tiempo real
         function actualizarReloj() {
             const ahora = new Date();
             document.getElementById('reloj').innerText = ahora.toLocaleTimeString();
         }
 
-        // Ejecución
         actualizarReloj();
         setInterval(actualizarReloj, 1000);
-        
         cargarDatos();
-        setInterval(cargarDatos, 10000); // Actualiza datos cada minuto
+        setInterval(cargarDatos, 30000); // Actualiza cada 30 segundos para mayor frescura
 
     </script>
 </body>
