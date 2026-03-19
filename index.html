@@ -7,22 +7,34 @@
     <style>
         /* --- 1. CONFIGURACIÓN DEL FONDO --- */
         body {
-            /* IMPORTANTE: Google Drive a veces bloquea el acceso directo. 
-               Si no ves tu imagen, súbela a Imgur.com y pega aquí el link .png */
+            /* 1. Mantenemos tu imagen de Google Drive o el link directo */
             background-image: url('https://lh3.googleusercontent.com/d/15PfdBzPzKhcW8CUeBwGF7YVaJC8Knh6S');
-            background-size: contain;
-            background-position: left;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-            background-color: #030a1a; /* Color de respaldo si la imagen falla */
             
+            /* 2. FIJAR TAMAÑO EXACTO */
+            /* Opción A (Píxeles): Control total. Si tu foto es para una tele 1080p, pon 1920px. 
+               Ajusta este número si se ve muy grande. */
+            background-size: 1920px auto; 
+        
+            /* Opción B (Porcentaje): Se adapta un poco más a la tele, pero mantiene proporción. */
+            /* background-size: 100% auto; */ 
+        
+            /* 3. ALINEAR ARRIBA A LA IZQUIERDA */
+            background-position: top left;
+            
+            /* 4. EVITAR QUE SE REPTITA */
+            background-repeat: no-repeat;
+            
+            /* 5. FONDO DE RESPALDO (Si la imagen falla o es más chica que la tele) */
+            background-color: #030a1a; 
+            background-attachment: fixed; /* Mantiene el fondo quieto al hacer scroll (opcional) */
+            
+            /* ... resto de propiedades de body (color, font, margin, overflow) ... */
             color: white;
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
             padding: 0;
             overflow: hidden;
         }
-
         /* --- 2. CONTENEDOR DE LA TABLA (TRANSPARENTE) --- */
         #fids-container {
             margin-top: 160px; /* Ajusta este número para que los datos bajen a las líneas de tu imagen */
