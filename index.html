@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FIDS CUCEA - 7 Columnas Fijas</title>
+    <title>FIDS CUCEA - Diseño Personalizado</title>
     <style>
-        /* --- 1. CONFIGURACIÓN VISUAL DEL FONDO --- */
+        /* --- 1. CONFIGURACIÓN DEL FONDO --- */
         body {
             background-image: url('https://lh3.googleusercontent.com/d/15PfdBzPzKhcW8CUeBwGF7YVaJC8Knh6S');
             background-size: 1920px auto; 
@@ -22,43 +22,82 @@
 
         /* --- 2. CONTENEDOR Y TABLA --- */
         #fids-container {
-            margin-top: 189px; 
+            margin-top: 202px; 
             padding: 0 125px;
             width: 100%;
         }
 
         table {
             border-collapse: collapse;
-            table-layout: fixed; /* Fuerza el respeto a los píxeles */
-            width: 1850px; /* SUMA TOTAL DE LOS ANCHOS DE ABAJO */
+            table-layout: fixed; 
+            /* La suma de tus columnas es 1550px */
+            width: 1550px; 
         }
 
         th { display: none; }
 
-        /* --- 3. ESTILO DE LAS CELDAS (MULTILÍNEA) --- */
+        /* --- 3. ESTILO BASE DE LAS CELDAS --- */
         td {
             padding: 8px 10px;
-            font-size: 25px; /* Un poco más pequeña para que quepan 7 columnas */
+            font-size: 19px; /* Tamaño base para el resto de columnas */
             font-weight: 500;
             color: #ffffff;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             
             white-space: normal;
             word-wrap: break-word;
-            vertical-align: center;
-            height: 44px;
+            vertical-align: top;
+            height: 44px; /* Un poco más alto por si usas letras grandes */
             line-height: 1.1;
         }
 
-        /* --- 4. ANCHOS DE LAS 7 COLUMNAS (Ajusta los PX aquí) --- */
-        /* La suma de estos 7 valores debe ser cercana a 1850px */
-        td:nth-child(1) { width: 100px; color: #ffd700; font-weight: bold; } /* Hora/NRC */
-        td:nth-child(2) { width: 100px; } /* Materia */
-        td:nth-child(3) { width: 400px; } /* Col 3 */
-        td:nth-child(4) { width: 400px; } /* Profesor */
-        td:nth-child(5) { width: 150px; } /* Edificio/Aula */
-        td:nth-child(6) { width: 100px; } /* COLUMNA NUEVA 6 */
-        td:nth-child(7) { width: 300px; } /* COLUMNA NUEVA 7 */
+        /* --- 4. CONFIGURACIÓN INDIVIDUAL DE COLUMNAS --- */
+
+        /* Columna 1: Hora/NRC - Amarilla, Bold, Tamaño 25 */
+        td:nth-child(1) { 
+            width: 100px; 
+            color: #ffd700; 
+            font-weight: bold; 
+            font-size: 25px; 
+        }
+
+        /* Columna 2: Materia - Blanca, Normal, Tamaño 25 */
+        td:nth-child(2) { 
+            width: 100px; 
+            color: #ffffff; 
+            font-weight: normal; 
+            font-size: 25px; 
+        }
+
+        /* Columna 3: Configúrame aquí */
+        td:nth-child(3) { 
+            width: 400px; 
+            color: #ffffff;
+        }
+
+        /* Columna 4: Profesor */
+        td:nth-child(4) { 
+            width: 400px; 
+            color: #ffffff;
+        }
+
+        /* Columna 5: Edificio/Aula */
+        td:nth-child(5) { 
+            width: 150px; 
+            color: #ffffff;
+        }
+
+        /* Columna 6: Nueva 6 */
+        td:nth-child(6) { 
+            width: 100px; 
+            color: #ffffff;
+        }
+
+        /* Columna 7: Nueva 7 */
+        td:nth-child(7) { 
+            width: 300px; 
+            color: #ffffff;
+        }
 
         /* Reloj */
         .reloj {
@@ -76,7 +115,7 @@
     <div id="reloj" class="reloj">00:00:00</div>
 
     <div id="fids-container">
-        <div id="tabla-datos">Cargando 7 columnas...</div>
+        <div id="tabla-datos">Cargando programación...</div>
     </div>
 
     <script>
@@ -96,7 +135,7 @@
                         const columnas = filas[i].split(',');
                         tablaHTML += '<tr>';
                         
-                        // CAMBIO AQUÍ: Ahora recorremos 7 columnas (0 al 6)
+                        // Recorremos las 7 columnas del CSV
                         for(let j=0; j<7; j++) {
                             let dato = columnas[j] ? columnas[j].trim() : '';
                             tablaHTML += `<td>${dato}</td>`;
@@ -104,8 +143,8 @@
                         
                         tablaHTML += '</tr>';
                     } else {
-                        // Relleno vacío para mantener el diseño
-                        tablaHTML += '<tr style="height:55px"><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>';
+                        // Mantiene la altura visual aunque no haya datos
+                        tablaHTML += '<tr style="height:60px"><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>';
                     }
                 }
 
@@ -113,7 +152,7 @@
                 document.getElementById('tabla-datos').innerHTML = tablaHTML;
 
             } catch (error) {
-                console.error("Error al obtener las 7 columnas:", error);
+                console.error("Error al obtener datos:", error);
             }
         }
 
