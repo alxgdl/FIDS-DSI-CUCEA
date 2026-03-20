@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FIDS CUCEA - Diseño Personalizado</title>
+    <title>FIDS CUCEA - Finalizado</title>
     <style>
         /* --- 1. CONFIGURACIÓN DEL FONDO --- */
         body {
@@ -11,10 +11,9 @@
             background-size: 1920px auto; 
             background-position: top left;
             background-repeat: no-repeat;
-            background-color: #030a1a; 
             background-attachment: fixed;
-            background-color: rgba(0, 0, 0, 0.5); /* Color negro con 50% de opacidad */
-            background-blend-mode: darken;        /* Mezcla el color para oscurecer la foto */
+            background-color: rgba(0, 0, 0, 0.6); /* Oscurecido un poco más para contraste */
+            background-blend-mode: darken;
             color: white;
             font-family: 'Segoe UI', Arial, sans-serif;
             margin: 0;
@@ -32,7 +31,6 @@
         table {
             border-collapse: collapse;
             table-layout: fixed; 
-            /* La suma de tus columnas es 1550px */
             width: 1550px; 
         }
 
@@ -41,71 +39,42 @@
         /* --- 3. ESTILO BASE DE LAS CELDAS --- */
         td {
             padding: 8px 10px;
-            font-size: 19px; /* Tamaño base para el resto de columnas */
+            font-size: 19px;
             font-weight: 500;
             color: #ffffff;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            
+            border-bottom: 1px solid transparent;
             white-space: normal;
-            word-wrap: break-word;
-            vertical-align: center;
-            height: 44px; /* Un poco más alto por si usas letras grandes */
+            vertical-align: middle; /* Centrado para que los iconos luzcan */
+            height: 44px; /* Altura fija para que no se desfase */
             line-height: 1;
         }
 
-        /* --- 4. CONFIGURACIÓN INDIVIDUAL DE COLUMNAS --- */
-
-        /* Columna 1: Hora/NRC - Amarilla, Bold, Tamaño 25 */
-        td:nth-child(1) { 
-            width: 150px; 
-            color: #ffd700; 
-            font-weight: bold; 
-            font-size: 35px; 
+        /* --- 4. TRUNCADO A 2 LÍNEAS (Para Col 2 y 3) --- */
+        .recortar-texto {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
-        /* Columna 2: Materia - Blanca, Normal, Tamaño 25 */
-        td:nth-child(2) { 
-            width: 140px; 
-            color: #ffffff; 
-            font-weight: normal; 
-            font-size: 30px; 
+        /* --- 5. CONFIGURACIÓN INDIVIDUAL DE COLUMNAS --- */
+        td:nth-child(1) { width: 150px; color: #ffd700; font-weight: bold; font-size: 35px; }
+        td:nth-child(2) { width: 140px; color: #ffffff; font-size: 30px; }
+        td:nth-child(3) { width: 400px; color: #ffd700; font-size: 22px; }
+        td:nth-child(4) { width: 400px; color: #ffffff; font-weight: bold; font-size: 22px; }
+        td:nth-child(5) { width: 150px; }
+        td:nth-child(6) { width: 100px; }
+        td:nth-child(7) { width: 300px; text-align: center; } /* Columna de Estados */
+
+        /* Estilo para las imágenes de estado */
+        .img-estado {
+            height: 44px;
+            width: auto;
+            display: block;
+            margin: 0 auto;
         }
 
-        /* Columna 3: Configúrame aquí */
-        td:nth-child(3) { 
-            width: 400px; 
-            color: #ffd700; 
-            font-weight: normal; 
-            font-size: 22px; 
-        }
-
-        /* Columna 4: Profesor */
-        td:nth-child(4) { 
-            width: 400px; 
-            color: #ffffff; 
-            font-weight: bold; 
-            font-size: 22px; 
-        }
-
-        /* Columna 5: Edificio/Aula */
-        td:nth-child(5) { 
-            width: 150px; 
-            color: #ffffff;
-        }
-
-        /* Columna 6: Nueva 6 */
-        td:nth-child(6) { 
-            width: 100px; 
-            color: #ffffff;
-        }
-
-        /* Columna 7: Nueva 7 */
-        td:nth-child(7) { 
-            width: 300px; 
-            color: #ffffff;
-        }
-
-        /* Reloj */
         .reloj {
             position: absolute;
             top: 35px;
@@ -125,6 +94,14 @@
     </div>
 
     <script>
+        // --- CONFIGURACIÓN DE IMÁGENES POR ESTADO (Ajusta los links aquí) ---
+        const diccionarioEstados = {
+            "EN CURSO": "https://lh3.googleusercontent.com/u/0/d/1KSvw_nuMtC6OwxJO-Da9ykfZAqEeZFfp",
+            "INICIANDO": "https://url_de_tu_imagen_iniciando.png",
+            "FINALIZANDO": "https://url_de_tu_imagen_finalizando.png",
+            "PROGRAMADA": "https://url_de_tu_imagen_programada.png"
+        };
+
         const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTtJ6ZlMM6skUMzxHY2LYmtU3WBojxBxxP1k7_exlFwS4THkhsC9OAt6Iq4NjxoXDvnugZwRzTjA9ZI/pub?gid=1178925333&single=true&output=csv';
         const maxFilas = 16; 
 
@@ -141,15 +118,29 @@
                         const columnas = filas[i].split(',');
                         tablaHTML += '<tr>';
                         
-                        // Recorremos las 7 columnas del CSV
                         for(let j=0; j<7; j++) {
                             let dato = columnas[j] ? columnas[j].trim() : '';
-                            tablaHTML += `<td>${dato}</td>`;
+                            
+                            // Lógica para columnas 2 (index 1) y 3 (index 2): Recorte a 2 líneas
+                            if (j === 1 || j === 2) {
+                                tablaHTML += `<td><div class="recortar-texto">${dato}</div></td>`;
+                            } 
+                            // Lógica para columna 7 (index 6): Sustitución por imagen
+                            else if (j === 6) {
+                                let estadoUpper = dato.toUpperCase();
+                                if (diccionarioEstados[estadoUpper]) {
+                                    tablaHTML += `<td><img src="${diccionarioEstados[estadoUpper]}" class="img-estado"></td>`;
+                                } else {
+                                    tablaHTML += `<td>${dato}</td>`; // Si no hay imagen, pone el texto
+                                }
+                            }
+                            // Resto de columnas
+                            else {
+                                tablaHTML += `<td>${dato}</td>`;
+                            }
                         }
-                        
                         tablaHTML += '</tr>';
                     } else {
-                        // Mantiene la altura visual aunque no haya datos
                         tablaHTML += '<tr style="height:60px"><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>';
                     }
                 }
@@ -163,15 +154,13 @@
         }
 
         function actualizarReloj() {
-            const ahora = new Date();
-            document.getElementById('reloj').innerText = ahora.toLocaleTimeString();
+            document.getElementById('reloj').innerText = new Date().toLocaleTimeString();
         }
 
         actualizarReloj();
         setInterval(actualizarReloj, 1000);
         cargarDatos();
         setInterval(cargarDatos, 30000); 
-
     </script>
 </body>
 </html>
