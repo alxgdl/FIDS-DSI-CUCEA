@@ -154,7 +154,7 @@
                             else if (j === 5) { // NUEVA LÓGICA: Edificios
                                 let primeraLetra = dato.charAt(0).toUpperCase();
                                 if (diccionarioEdificios[primeraLetra]) {
-                                    tablaHTML += `<td><img src="${diccionarioEdificios[primeraLetra]}" class="img-edificio"></td>`;
+                                    tablaHTML += `<td><img src="${diccionarioEdificios[primeraLetra]}" class="img-edificio"></td>`+`<td>${dato}</td>`;
                                 } else {
                                     tablaHTML += `<td>${dato}</td>`;
                                 }
