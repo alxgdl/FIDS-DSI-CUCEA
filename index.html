@@ -63,24 +63,19 @@
         td:nth-child(2) { width: 140px; color: #ffffff; font-size: 30px; }
         td:nth-child(3) { width: 400px; color: #ffd700; font-size: 22px; }
         td:nth-child(4) { width: 400px; color: #ffffff; font-weight: bold; font-size: 22px; }
-        td:nth-child(5) { width: 180px; text-align: center; } /* Columna Nivel Académico */
-        td:nth-child(6) { width: 120px; color: #ffffff; bold; font-size: 40px; }
+        td:nth-child(5) { width: 180px; text-align: center; } 
+        td:nth-child(6) { width: 120px; text-align: center; } /* Columna Edificios */
         td:nth-child(7) { width: 200px; text-align: left; }
 
-        /* --- Estilo para las imágenes de ESTADO (Columna 7) --- */
-        .img-estado {
-            height: 44px; 
-            width: auto;
-            display: inline-block;
-            vertical-align: middle; /* Alineación vertical correcta */
-        }
+        /* --- ESTILOS DE IMÁGENES --- */
+        .img-estado { height: 44px; width: auto; display: inline-block; vertical-align: middle; }
+        .img-nivel { height: 30px; width: auto; display: inline-block; vertical-align: middle; }
         
-        /* --- Estilo para las imágenes de NIVEL (Columna 5) --- */
-        .img-nivel {
-            height: 30px; 
-            width: auto;
-            display: inline-block;
-            vertical-align: middle;
+        .img-edificio { 
+            height: 50px; /* Un poco más grande para los círculos */
+            width: auto; 
+            display: inline-block; 
+            vertical-align: middle; 
         }
 
         .reloj {
@@ -102,7 +97,6 @@
     </div>
 
     <script>
-        // --- CONFIGURACIÓN DE IMÁGENES POR ESTADO ---
         const diccionarioEstados = {
             "EN CURSO": "BotonEncurso.png",
             "INICIANDO": "BotonIniciando.png",
@@ -110,12 +104,21 @@
             "PROGRAMADA": "BotonProgramada.png"
         };
 
-        // --- CONFIGURACIÓN DE IMÁGENES POR NIVEL ACADÉMICO ---
         const diccionarioNiveles = {
             "T.S.U.": "BotonTSU.png",
             "LICENCIATURA": "BotonLicenciatura.png",
             "MAESTRIA": "BotonMaestria.png",
             "DOCTORADO": "BotonDoctorado.png"
+        };
+
+        // --- DICCIONARIO PARA EDIFICIOS (COLUMNA 6) ---
+        const diccionarioEdificios = {
+            "I": "EdificioI.png",
+            "N": "EdificioN.png",
+            "K": "EdificioK.png",
+            "L": "EdificioL.png",
+            "P": "EdificioP.png",
+            "Q": "EdificioQ.png"
         };
 
         const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTtJ6ZlMM6skUMzxHY2LYmtU3WBojxBxxP1k7_exlFwS4THkhsC9OAt6Iq4NjxoXDvnugZwRzTjA9ZI/pub?gid=1178925333&single=true&output=csv';
@@ -137,12 +140,10 @@
                         for(let j=0; j<7; j++) {
                             let dato = columnas[j] ? columnas[j].trim() : '';
                             
-                            // Col 2 y 3: Recorte de texto
                             if (j === 1 || j === 2) {
                                 tablaHTML += `<td><div class="recortar-texto">${dato}</div></td>`;
                             } 
-                            // NUEVA LÓGICA: Columna 5 (Nivel Académico)
-                            else if (j === 4) {
+                            else if (j === 4) { // Nivel Académico
                                 let nivelUpper = dato.toUpperCase();
                                 if (diccionarioNiveles[nivelUpper]) {
                                     tablaHTML += `<td><img src="${diccionarioNiveles[nivelUpper]}" class="img-nivel"></td>`;
@@ -150,8 +151,15 @@
                                     tablaHTML += `<td>${dato}</td>`;
                                 }
                             }
-                            // Columna 7: Estados
-                            else if (j === 6) {
+                            else if (j === 5) { // NUEVA LÓGICA: Edificios
+                                let primeraLetra = dato.charAt(0).toUpperCase();
+                                if (diccionarioEdificios[primeraLetra]) {
+                                    tablaHTML += `<td><img src="${diccionarioEdificios[primeraLetra]}" class="img-edificio"></td>`;
+                                } else {
+                                    tablaHTML += `<td>${dato}</td>`;
+                                }
+                            }
+                            else if (j === 6) { // Estados
                                 let estadoUpper = dato.toUpperCase();
                                 if (diccionarioEstados[estadoUpper]) {
                                     tablaHTML += `<td><img src="${diccionarioEstados[estadoUpper]}" class="img-estado"></td>`;
@@ -159,7 +167,6 @@
                                     tablaHTML += `<td>${dato}</td>`;
                                 }
                             }
-                            // Resto de columnas
                             else {
                                 tablaHTML += `<td>${dato}</td>`;
                             }
