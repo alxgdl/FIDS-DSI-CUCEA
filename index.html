@@ -12,7 +12,7 @@
             background-position: top left;
             background-repeat: no-repeat;
             background-attachment: fixed;
-            background-color: rgba(0, 0, 0, 0.6); /* Oscurecido un poco más para contraste */
+            background-color: rgba(0, 0, 0, 0.6); 
             background-blend-mode: darken;
             color: white;
             font-family: 'Segoe UI', Arial, sans-serif;
@@ -44,12 +44,12 @@
             color: #ffffff;
             border-bottom: 1px solid transparent;
             white-space: normal;
-            vertical-align: middle; /* Centrado para que los iconos luzcan */
-            height: 44px; /* Altura fija para que no se desfase */
+            vertical-align: middle; 
+            height: 44px; 
             line-height: 1;
         }
 
-        /* --- 4. TRUNCADO A 2 LÍNEAS (Para Col 2 y 3) --- */
+        /* --- 4. TRUNCADO A 2 LÍNEAS --- */
         .recortar-texto {
             display: -webkit-box;
             -webkit-line-clamp: 2;
@@ -63,16 +63,16 @@
         td:nth-child(2) { width: 140px; color: #ffffff; font-size: 30px; }
         td:nth-child(3) { width: 400px; color: #ffd700; font-size: 22px; }
         td:nth-child(4) { width: 400px; color: #ffffff; font-weight: bold; font-size: 22px; }
-        td:nth-child(5) { width: 150px; }
+        td:nth-child(5) { width: 180px; text-align: center; } /* Columna Nivel Académico */
         td:nth-child(6) { width: 50px; }
-        td:nth-child(7) { width: 300px; text-align: left; } /* Columna de Estados */
+        td:nth-child(7) { width: 300px; text-align: left; }
 
-        /* Estilo para las imágenes de estado */
-        .img-estado {
-            height: 44px;
+        /* Estilo para las imágenes */
+        .img-estado, .img-nivel {
+            height: 40px; /* Ajustado a 40px como pediste */
             width: auto;
-            display: block;
-            margin: 0 auto;
+            display: inline-block;
+            vertical-align: middle;
         }
 
         .reloj {
@@ -94,12 +94,20 @@
     </div>
 
     <script>
-        // --- CONFIGURACIÓN DE IMÁGENES POR ESTADO (Ajusta los links aquí) ---
+        // --- CONFIGURACIÓN DE IMÁGENES POR ESTADO ---
         const diccionarioEstados = {
             "EN CURSO": "BotonEncurso.png",
             "INICIANDO": "BotonIniciando.png",
             "FINALIZANDO": "BotonFinalizando.png",
             "PROGRAMADA": "BotonProgramada.png"
+        };
+
+        // --- CONFIGURACIÓN DE IMÁGENES POR NIVEL ACADÉMICO ---
+        const diccionarioNiveles = {
+            "T.S.U.": "BotonTSU.png",
+            "LICENCIATURA": "BotonLicenciatura.png",
+            "MAESTRÍA": "BotonMaestria.png",
+            "DOCTORADO": "BotonDoctorado.png"
         };
 
         const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTtJ6ZlMM6skUMzxHY2LYmtU3WBojxBxxP1k7_exlFwS4THkhsC9OAt6Iq4NjxoXDvnugZwRzTjA9ZI/pub?gid=1178925333&single=true&output=csv';
@@ -121,17 +129,26 @@
                         for(let j=0; j<7; j++) {
                             let dato = columnas[j] ? columnas[j].trim() : '';
                             
-                            // Lógica para columnas 2 (index 1) y 3 (index 2): Recorte a 2 líneas
+                            // Col 2 y 3: Recorte de texto
                             if (j === 1 || j === 2) {
                                 tablaHTML += `<td><div class="recortar-texto">${dato}</div></td>`;
                             } 
-                            // Lógica para columna 7 (index 6): Sustitución por imagen
+                            // NUEVA LÓGICA: Columna 5 (Nivel Académico)
+                            else if (j === 4) {
+                                let nivelUpper = dato.toUpperCase();
+                                if (diccionarioNiveles[nivelUpper]) {
+                                    tablaHTML += `<td><img src="${diccionarioNiveles[nivelUpper]}" class="img-nivel"></td>`;
+                                } else {
+                                    tablaHTML += `<td>${dato}</td>`;
+                                }
+                            }
+                            // Columna 7: Estados
                             else if (j === 6) {
                                 let estadoUpper = dato.toUpperCase();
                                 if (diccionarioEstados[estadoUpper]) {
                                     tablaHTML += `<td><img src="${diccionarioEstados[estadoUpper]}" class="img-estado"></td>`;
                                 } else {
-                                    tablaHTML += `<td>${dato}</td>`; // Si no hay imagen, pone el texto
+                                    tablaHTML += `<td>${dato}</td>`;
                                 }
                             }
                             // Resto de columnas
