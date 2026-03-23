@@ -173,7 +173,7 @@
                                 let estadoUpper = dato.toUpperCase();
                                 if (diccionarioEstados[estadoUpper]) {
                                     // Lógica de parpadeo: si es "EN CURSO", añade la clase CSS
-                                    let claseExtra = (estadoUpper === "EN CURSO") ? "efecto-parpadeo" : "";
+                                    let claseExtra = (estadoUpper === "FINALIZANDO") || claseExtra = (estadoUpper === "INICIANDO") ? "efecto-parpadeo" : "";
                                     tablaHTML += `<td><img src="${diccionarioEstados[estadoUpper]}" class="img-estado ${claseExtra}"></td>`;
                                 } else {
                                     tablaHTML += `<td>${dato}</td>`;
