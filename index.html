@@ -86,6 +86,18 @@
             font-weight: bold;
             color: #ffd700;
         }
+        
+        /* Definimos la animación de parpadeo */
+        @keyframes parpadeo {
+          0% { opacity: 1; }
+          50% { opacity: 0.3; }
+          100% { opacity: 1; }
+        }
+
+/* Creamos una clase para aplicar la animación */
+.efecto-parpadeo {
+  animation: parpadeo 1s infinite;
+}
     </style>
 </head>
 <body>
@@ -157,10 +169,12 @@
                                     tablaHTML += `<td>${dato}</td>`;
                                 }
                             }
-                            else if (j === 6) { // Estados
+                            else if (j === 6) {
                                 let estadoUpper = dato.toUpperCase();
                                 if (diccionarioEstados[estadoUpper]) {
-                                    tablaHTML += `<td><img src="${diccionarioEstados[estadoUpper]}" class="img-estado"></td>`;
+                                    // Lógica de parpadeo: si es "EN CURSO", añade la clase CSS
+                                    let claseExtra = (estadoUpper === "EN CURSO") ? "efecto-parpadeo" : "";
+                                    tablaHTML += `<td><img src="${diccionarioEstados[estadoUpper]}" class="img-estado ${claseExtra}"></td>`;
                                 } else {
                                     tablaHTML += `<td>${dato}</td>`;
                                 }
