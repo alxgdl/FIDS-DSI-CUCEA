@@ -103,6 +103,37 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
+
+        /* Estilos para la tabla de encabezado */
+        .tabla-encabezado {
+            border-collapse: collapse;
+            table-layout: fixed;
+            width: 1550px;
+            background-color: rgba(0, 50, 100, 0.8); /* Un azul oscuro semi-transparente para resaltar */
+        }
+        
+        .tabla-encabezado th {
+            padding: 10px;
+            text-align: left;
+            color: #ffd700; /* Dorado para que resalte como el reloj */
+            font-size: 18px;
+            font-weight: bold;
+            border-bottom: 2px solid #ffd700;
+        }
+        
+        /* COPIAMOS LOS ANCHOS EXACTOS DE TUS COLUMNAS */
+        .tabla-encabezado th:nth-child(1), td:nth-child(1) { width: 140px; }
+        .tabla-encabezado th:nth-child(2), td:nth-child(2) { width: 130px; }
+        .tabla-encabezado th:nth-child(3), td:nth-child(3) { width: 180px; }
+        .tabla-encabezado th:nth-child(4), td:nth-child(4) { width: 380px; }
+        .tabla-encabezado th:nth-child(5), td:nth-child(5) { width: 340px; }
+        .tabla-encabezado th:nth-child(6), td:nth-child(6) { width: 180px; text-align: center; }
+        .tabla-encabezado th:nth-child(7), td:nth-child(7) { width: 200px; }
+        
+        /* Ajuste para que los encabezados de nivel y edificio estén centrados si lo prefieres */
+        .tabla-encabezado th:nth-child(3) { text-align: left; }
+        .tabla-encabezado th:nth-child(6) { text-align: center; }
+        
     </style>
 </head>
 <body>
@@ -112,7 +143,23 @@
         <div id="paginador" class="paginador">PÁGINA 1 de 1</div>
     </div>
 
-    <div id="fids-container">
+    <div id="fids-header-container" style="padding: 0 370px; margin-top: 188px;">
+        <table class="tabla-encabezado">
+            <thead>
+                <tr>
+                    <th>HORA</th>
+                    <th>FIN</th>
+                    <th>EDIFICIO / AULA</th>
+                    <th>MATERIA</th>
+                    <th>PROFESOR</th>
+                    <th>NIVEL</th>
+                    <th>ESTADO</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+    
+    <div id="fids-container" style="margin-top: 0px; padding: 0 370px;">>
         <div id="tabla-datos">Cargando programación...</div>
     </div>
 
