@@ -109,7 +109,7 @@
             border-collapse: collapse;
             table-layout: fixed;
             width: 1550px;
-            background-color: rgba(0, 50, 100, 1); /* Un azul oscuro semi-transparente para resaltar */
+            background-color: transparent; /* rgba(0, 50, 100, 1); /* Un azul oscuro semi-transparente para resaltar */
         }
         
         .tabla-encabezado th {
@@ -125,15 +125,10 @@
         .tabla-encabezado th:nth-child(1), td:nth-child(1) { width: 150px; text-align: center; }
         .tabla-encabezado th:nth-child(2), td:nth-child(2) { width: 120px; text-align: center; }
         .tabla-encabezado th:nth-child(3), td:nth-child(3) { width: 220px; text-align: center; }
-        .tabla-encabezado th:nth-child(4), td:nth-child(4) { width: 380px; }
-        .tabla-encabezado th:nth-child(5), td:nth-child(5) { width: 340px; }
+        .tabla-encabezado th:nth-child(4), td:nth-child(4) { width: 380px; text-align: center; }
+        .tabla-encabezado th:nth-child(5), td:nth-child(5) { width: 340px; text-align: center; }
         .tabla-encabezado th:nth-child(6), td:nth-child(6) { width: 120px; text-align: center; }
         .tabla-encabezado th:nth-child(7), td:nth-child(7) { width: 200px; text-align: center; }
-        
-        /* Ajuste para que los encabezados de nivel y edificio estén centrados si lo prefieres */
-        .tabla-encabezado th:nth-child(3) { text-align: left; }
-        .tabla-encabezado th:nth-child(6) { text-align: center; }
-        
     </style>
 </head>
 <body>
