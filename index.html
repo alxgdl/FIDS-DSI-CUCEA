@@ -69,21 +69,22 @@
         .img-nivel { height: 30px; width: auto; vertical-align: middle; }
         .img-edificio { height: 44px; width: auto; vertical-align: middle; margin-right: 8px; }
 
-        .reloj {
+        .reloj-inferior {
             position: absolute;
-            top: 35px;
-            right: 60px;
-            font-size: 34px;
+            bottom: 40px;   /* Distancia desde abajo */
+            right: 80px;    /* Distancia desde la derecha */
+            text-align: right;
+            font-size: 45px; /* Un poco más grande para que destaque abajo */
             font-weight: bold;
             color: #ffd700;
-            text-align: left;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5); /* Sombra para que se lea bien sobre el fondo */
         }
-
+        
         .paginador {
-            font-size: 18px;
+            font-size: 20px;
             color: #ffffff;
             font-weight: normal;
-            margin-top: 5px;
+            margin-top: -5px; /* Ajuste para que quede pegadito al reloj */
         }
         
         @keyframes parpadeo {
