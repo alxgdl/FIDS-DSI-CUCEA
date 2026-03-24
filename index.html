@@ -43,11 +43,11 @@
             opacity: 0 !important;
         }
 
-        /* --- 3. TABLAS (Encabezado y Datos) --- */
+        /* --- 3. ESTRUCTURA BASE DE TABLAS --- */
         table {
             border-collapse: collapse;
             table-layout: fixed; 
-            width: 1650px; /* Asegúrate que ambas midan lo mismo */
+            width: 1650px;
         }
 
         td, th {
@@ -57,28 +57,46 @@
             line-height: 1;
         }
 
-        /* Estilos específicos de Datos */
-        td {
-            font-size: 19px;
-            font-weight: 500;
-            color: #ffffff;
-            border-bottom: 1px solid transparent;
-        }
-
-        /* Estilos específicos de Encabezado */
+        /* --- 4. ESTILOS EXCLUSIVOS DEL ENCABEZADO (Diferente a los datos) --- */
         .tabla-encabezado {
             background-color: transparent;
         }
         
         .tabla-encabezado th {
-            text-align: left;
-            color: #ffd700;
-            font-size: 28px;
-            font-weight: bold;
+            color: #ffd700; /* Dorado */
+            font-size: 26px; /* Tamaño específico para títulos */
+            font-weight: 800;
+            text-transform: uppercase;
             border-bottom: 3px solid #ffd700;
+            text-align: left;
         }
 
-        /* --- 4. CONFIGURACIÓN DE COLUMNAS (Mismos anchos para ambas tablas) --- */
+        /* Alineaciones específicas para los títulos */
+        .tabla-encabezado th:nth-child(1),
+        .tabla-encabezado th:nth-child(2),
+        .tabla-encabezado th:nth-child(3),
+        .tabla-encabezado th:nth-child(6) {
+            text-align: center;
+        }
+
+        /* --- 5. ESTILOS EXCLUSIVOS DE LOS DATOS --- */
+        #tabla-datos td {
+            font-size: 19px;
+            font-weight: 500;
+            color: #ffffff;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Personalización de columnas de DATOS (sin afectar th) */
+        #tabla-datos td:nth-child(1) { text-align: center; font-size: 33px; font-weight: bold; } /* Hora */
+        #tabla-datos td:nth-child(2) { text-align: center; color: #B3E5FC; font-size: 30px; }   /* Fin */
+        #tabla-datos td:nth-child(3) { text-align: center; }                                   /* Nivel */
+        #tabla-datos td:nth-child(4) { text-align: left; color: #B3E5FC; font-weight: bold; font-size: 22px; } /* Asignatura */
+        #tabla-datos td:nth-child(5) { text-align: left; font-size: 22px; }                    /* Docente */
+        #tabla-datos td:nth-child(6) { text-align: center; font-size: 28px; font-weight: bold; } /* Lugar */
+        #tabla-datos td:nth-child(7) { text-align: left; }                                     /* Estado */
+
+        /* --- 6. CONFIGURACIÓN DE ANCHOS (Consistente para ambas tablas) --- */
         .col-1 { width: 150px; }
         .col-2 { width: 120px; }
         .col-3 { width: 220px; }
@@ -87,16 +105,7 @@
         .col-6 { width: 120px; }
         .col-7 { width: 320px; }
 
-        /* Alineaciones específicas */
-        td:nth-child(1), th:nth-child(1) { text-align: center; font-size: 33px; font-weight: bold; }
-        td:nth-child(2), th:nth-child(2) { text-align: center; color: #B3E5FC; font-size: 30px; }
-        td:nth-child(3), th:nth-child(3) { text-align: center; }
-        td:nth-child(4), th:nth-child(4) { text-align: left; color: #B3E5FC; font-weight: bold; font-size: 22px; }
-        td:nth-child(5), th:nth-child(5) { text-align: left; font-size: 22px; }
-        td:nth-child(6), th:nth-child(6) { text-align: center; font-size: 28px; font-weight: bold; }
-        td:nth-child(7), th:nth-child(7) { text-align: left; }
-
-        /* --- 5. COMPONENTES VISUALES --- */
+        /* --- 7. COMPONENTES VISUALES --- */
         .img-estado { height: 44px; width: auto; vertical-align: middle; }
         .img-nivel { height: 30px; width: auto; vertical-align: middle; }
         .img-edificio { height: 44px; width: auto; vertical-align: middle; margin-right: 8px; }
@@ -113,17 +122,17 @@
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
-            overflow: hidden;
+            #overflow: hidden;
             text-overflow: ellipsis;
         }
 
-        /* --- 6. RELOJ Y PAGINADOR (FIJOS ABAJO) --- */
+        /* --- 8. RELOJ Y PAGINADOR --- */
         .reloj-fijo {
             position: fixed;
             bottom: 100px;
             right: 60px;
             text-align: left;
-            z-index: 100; /* Asegura que esté por encima de todo */
+            z-index: 100;
         }
 
         #reloj {
@@ -210,14 +219,11 @@
                 for (let i = 0; i < filasPorPagina; i++) {
                     if (filasActuales[i]) {
                         const columnas = filasActuales[i].split(',');
-                        // Orden: HoraIni, HoraFin, Nivel, Materia, Profesor, Edificio, Estado
                         const ordenColumnas = [0, 1, 4, 2, 3, 5, 6];
                         
                         tablaHTML += '<tr>';
                         ordenColumnas.forEach((indiceOriginal, posicionVisual) => {
                             let dato = columnas[indiceOriginal] ? columnas[indiceOriginal].trim() : '';
-                            
-                            // Usamos las clases de ancho definidas arriba para consistencia
                             let claseAncho = `col-${posicionVisual + 1}`;
 
                             if (posicionVisual === 3 || posicionVisual === 4) { 
