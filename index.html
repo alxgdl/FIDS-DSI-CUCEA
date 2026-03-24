@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FIDS CUCEA - Finalizado</title>
+    <title>FIDS CUCEA - Paginado con Fade</title>
     <style>
         /* --- 1. CONFIGURACIÓN DEL FONDO --- */
         body {
@@ -28,49 +28,46 @@
             width: 100%;
         }
 
+        /* EFECTO DESVANECEDOR (FADE) */
+        #tabla-datos {
+            transition: opacity 0.5s ease-in-out;
+            opacity: 1;
+        }
+
+        .fade-out {
+            opacity: 0 !important;
+        }
+
         table {
             border-collapse: collapse;
             table-layout: fixed; 
             width: 1550px; 
         }
 
-        th { display: none; }
-
-        /* --- 3. ESTILO BASE DE LAS CELDAS --- */
         td {
             padding: 8px 10px;
             font-size: 19px;
             font-weight: 500;
             color: #ffffff;
             border-bottom: 1px solid transparent;
-            white-space: normal;
             vertical-align: middle; 
             height: 44px; 
             line-height: 1;
         }
 
-        /* --- 4. TRUNCADO A 2 LÍNEAS --- */
-        .recortar-texto {
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
+        /* --- 3. CONFIGURACIÓN REORDENADA DE COLUMNAS --- */
+        /* Col 1: Hora Inicio */ td:nth-child(1) { width: 140px; color: #ffffff; font-weight: bold; font-size: 33px; }
+        /* Col 2: Hora Fin */    td:nth-child(2) { width: 130px; color: #B3E5FC; font-size: 30px; }
+        /* Col 3: EDIFICIO (NUEVA) */ td:nth-child(3) { width: 180px; text-align: left; color: #ffffff; font-size: 28px; font-weight: bold; }
+        /* Col 4: Materia */     td:nth-child(4) { width: 380px; color: #ffffff; font-size: 22px; }
+        /* Col 5: Profesor */    td:nth-child(5) { width: 340px; color: #B3E5FC; font-weight: bold; font-size: 22px; }
+        /* Col 6: Nivel */       td:nth-child(6) { width: 180px; text-align: center; } 
+        /* Col 7: Estado */      td:nth-child(7) { width: 200px; text-align: left; }
 
-        /* --- 5. CONFIGURACIÓN INDIVIDUAL DE COLUMNAS --- */
-        td:nth-child(1) { width: 160px; color: #ffffff; font-weight: bold; font-size: 33px; }
-        td:nth-child(2) { width: 140px; color: #B3E5FC; font-size: 30px; }
-        td:nth-child(3) { width: 120px; text-align: center; color: #ffffff; font-size: 30px; } 
-        td:nth-child(4) { width: 350px; color: #ffffff; font-size: 22px; }
-        td:nth-child(5) { width: 340px; color: #B3E5FC; font-weight: bold; font-size: 22px; }
-        td:nth-child(6) { width: 210px; text-align: center; } 
-        td:nth-child(7) { width: 200px; text-align: left; }
-
-        /* --- ESTILOS DE IMÁGENES Y UI --- */
-        .img-estado { height: 44px; width: auto; display: inline-block; vertical-align: middle; }
-        .img-nivel { height: 30px; width: auto; display: inline-block; vertical-align: middle; }
-        .img-edificio { height: 40px; width: auto; display: inline-block; vertical-align: middle; }
+        /* --- ESTILOS DE IMÁGENES --- */
+        .img-estado { height: 44px; width: auto; vertical-align: middle; }
+        .img-nivel { height: 30px; width: auto; vertical-align: middle; }
+        .img-edificio { height: 45px; width: auto; vertical-align: middle; margin-right: 8px; }
 
         .reloj {
             position: absolute;
@@ -98,6 +95,14 @@
         .efecto-parpadeo {
           animation: parpadeo 2.5s infinite ease-in-out;
         }
+
+        .recortar-texto {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
     </style>
 </head>
 <body>
@@ -112,137 +117,108 @@
     </div>
 
     <script>
-        const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTtJ6ZlMM6skUMzxHY2LYmtU3WBojxBxxP1k7_exlFwS4THkhsC9OAt6Iq4NjxoXDvnugZwRzTjA9ZI/pub?gid=52319349&single=true&output=csv';
+        const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTtJ6ZlMM6skUMzxHY2LYmtU3WBojxBxxP1k7_exlFwS4THkhsC9OAt6Iq4NjxoXDvnugZwRzTjA9ZI/pub?gid=1178925333&single=true&output=csv';
         
-        // Variables de Paginación
         const filasPorPagina = 15;
         let todasLasFilas = [];
         let indicePagina = 0;
 
-        const diccionarioEstados = {
-            "EN CURSO": "BotonEncurso.png",
-            "INICIANDO": "BotonIniciando.png",
-            "FINALIZANDO": "BotonFinalizando.png",
-            "PROGRAMADA": "BotonProgramada.png"
-        };
-
-        const diccionarioNiveles = {
-            "T.S.U.": "botonTSU.png",
-            "LICENCIATURA": "botonLicenciatura.png",
-            "MAESTRIA": "botonMaestria.png",
-            "DOCTORADO": "botonDoctorado.png"
-        };
-
-        const diccionarioEdificios = {
-            "I": "EdificioI.png",
-            "N": "EdificioN.png",
-            "K": "EdificioK.png",
-            "L": "EdificioL.png",
-            "P": "EdificioP.png",
-            "Q": "EdificioQ.png"
-        };
+        const diccionarioEstados = { "EN CURSO": "BotonEncurso.png", "INICIANDO": "BotonIniciando.png", "FINALIZANDO": "BotonFinalizando.png", "PROGRAMADA": "BotonProgramada.png" };
+        const diccionarioNiveles = { "T.S.U.": "botonTSU.png", "LICENCIATURA": "botonLicenciatura.png", "MAESTRIA": "botonMaestria.png", "DOCTORADO": "botonDoctorado.png" };
+        const diccionarioEdificios = { "I": "EdificioI.png", "N": "EdificioN.png", "K": "EdificioK.png", "L": "EdificioL.png", "P": "EdificioP.png", "Q": "EdificioQ.png" };
 
         async function cargarDatos() {
             try {
                 const respuesta = await fetch(csvUrl + '&t=' + Date.now());
                 const texto = await respuesta.text();
-                // Convertir a array y limpiar filas vacías
                 const filasBrutas = texto.split('\n').filter(f => f.trim() !== '');
-                
-                // Guardamos todas menos la cabecera
                 todasLasFilas = filasBrutas.slice(1); 
-                
-                // Si es la primera vez que carga, mostramos de inmediato
                 if(indicePagina === 0) mostrarPagina();
-                
             } catch (error) {
-                console.error("Error al obtener datos:", error);
+                console.error("Error:", error);
             }
         }
 
         function mostrarPagina() {
             if (todasLasFilas.length === 0) return;
 
-            const totalPaginas = Math.ceil(todasLasFilas.length / filasPorPagina);
-            const inicio = indicePagina * filasPorPagina;
-            const fin = inicio + filasPorPagina;
-            const filasActuales = todasLasFilas.slice(inicio, fin);
+            const contenedor = document.getElementById('tabla-datos');
+            
+            // 1. Iniciar desvanecimiento
+            contenedor.classList.add('fade-out');
 
-            // Actualizar el texto del paginador
-            document.getElementById('paginador').innerText = `PÁGINA ${indicePagina + 1} de ${totalPaginas}`;
+            setTimeout(() => {
+                const totalPaginas = Math.ceil(todasLasFilas.length / filasPorPagina);
+                const inicio = indicePagina * filasPorPagina;
+                const fin = inicio + filasPorPagina;
+                const filasActuales = todasLasFilas.slice(inicio, fin);
 
-            let tablaHTML = '<table><tbody>';
+                document.getElementById('paginador').innerText = `PÁGINA ${indicePagina + 1} de ${totalPaginas}`;
 
-            for (let i = 0; i < filasPorPagina; i++) {
-                if (filasActuales[i]) {
-                    const columnas = filasActuales[i].split(',');
-                    tablaHTML += '<tr>';
-                    
-                    for(let j=0; j<7; j++) {
-                        let dato = columnas[j] ? columnas[j].trim() : '';
+                let tablaHTML = '<table><tbody>';
 
-                        else if (j === 2) { // Edificios
-                            let primeraLetra = dato.charAt(0).toUpperCase();
-                            if (diccionarioEdificios[primeraLetra]) {
-                                tablaHTML += `<td><img src="${diccionarioEdificios[primeraLetra]}" class="img-edificio">${dato.slice(1)}</td>`;
-                            } else {
-                                tablaHTML += `<td>${dato}</td>`;
-                            }
-                        }
+                for (let i = 0; i < filasPorPagina; i++) {
+                    if (filasActuales[i]) {
+                        const columnas = filasActuales[i].split(',');
                         
-                        if (j === 3 || j === 4) {
-                            tablaHTML += `<td><div class="recortar-texto">${dato}</div></td>`;
-                        } 
-                        else if (j === 5) { // Nivel Académico
-                            let nivelUpper = dato.toUpperCase();
-                            if (diccionarioNiveles[nivelUpper]) {
-                                tablaHTML += `<td><img src="${diccionarioNiveles[nivelUpper]}" class="img-nivel"></td>`;
-                            } else {
-                                tablaHTML += `<td>${dato}</td>`;
+                        // Mapeo manual para mover la columna 6 (índice 5) a la posición 3
+                        // El nuevo orden de índices será: 0, 1, 5, 2, 3, 4, 6
+                        const ordenColumnas = [0, 1, 5, 2, 3, 4, 6];
+                        
+                        tablaHTML += '<tr>';
+                        ordenColumnas.forEach((indiceOriginal, posicionVisual) => {
+                            let dato = columnas[indiceOriginal] ? columnas[indiceOriginal].trim() : '';
+                            
+                            // Lógica por POSICIÓN VISUAL
+                            if (posicionVisual === 3 || posicionVisual === 4) { // Materia y Profesor
+                                tablaHTML += `<td><div class="recortar-texto">${dato}</div></td>`;
+                            } 
+                            else if (posicionVisual === 2) { // NUEVA POSICIÓN: Edificios
+                                let primeraLetra = dato.charAt(0).toUpperCase();
+                                if (diccionarioEdificios[primeraLetra]) {
+                                    tablaHTML += `<td><img src="${diccionarioEdificios[primeraLetra]}" class="img-edificio">${dato.slice(1)}</td>`;
+                                } else {
+                                    tablaHTML += `<td>${dato}</td>`;
+                                }
                             }
-                        }
-                        else if (j === 6) { // Estados
-                            let estadoUpper = dato.toUpperCase();
-                            if (diccionarioEstados[estadoUpper]) {
+                            else if (posicionVisual === 5) { // Nivel Académico
+                                let nivelUpper = dato.toUpperCase();
+                                tablaHTML += `<td>${diccionarioNiveles[nivelUpper] ? `<img src="${diccionarioNiveles[nivelUpper]}" class="img-nivel">` : dato}</td>`;
+                            }
+                            else if (posicionVisual === 6) { // Estados
+                                let estadoUpper = dato.toUpperCase();
                                 let claseExtra = (estadoUpper === "FINALIZANDO" || estadoUpper === "INICIANDO") ? "efecto-parpadeo" : "";
-                                tablaHTML += `<td><img src="${diccionarioEstados[estadoUpper]}" class="img-estado ${claseExtra}"></td>`;
-                            } else {
+                                tablaHTML += `<td>${diccionarioEstados[estadoUpper] ? `<img src="${diccionarioEstados[estadoUpper]}" class="img-estado ${claseExtra}">` : dato}</td>`;
+                            }
+                            else {
                                 tablaHTML += `<td>${dato}</td>`;
                             }
-                        }
-                        else {
-                            tablaHTML += `<td>${dato}</td>`;
-                        }
+                        });
+                        tablaHTML += '</tr>';
+                    } else {
+                        tablaHTML += '<tr style="height:60px"><td colspan="7"></td></tr>';
                     }
-                    tablaHTML += '</tr>';
-                } else {
-                    // Fila vacía para mantener la estructura de 15 filas siempre
-                    tablaHTML += '<tr style="height:60px"><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>';
                 }
-            }
 
-            tablaHTML += '</tbody></table>';
-            document.getElementById('tabla-datos').innerHTML = tablaHTML;
+                tablaHTML += '</tbody></table>';
+                contenedor.innerHTML = tablaHTML;
 
-            // Avanzar a la siguiente página para el próximo ciclo
-            indicePagina = (indicePagina + 1) % totalPaginas;
+                // 2. Quitar desvanecimiento
+                contenedor.classList.remove('fade-out');
+
+                indicePagina = (indicePagina + 1) % totalPaginas;
+            }, 500); // El tiempo del timeout debe coincidir con el transition del CSS
         }
 
         function actualizarReloj() {
             document.getElementById('reloj').innerText = new Date().toLocaleTimeString();
         }
 
-        // Inicialización
         actualizarReloj();
         setInterval(actualizarReloj, 1000);
-        
         cargarDatos();
-        // Recargar datos del servidor cada 30 segundos (en segundo plano)
         setInterval(cargarDatos, 30000); 
-
-        // Cambiar de página visualmente cada 10 segundos
         setInterval(mostrarPagina, 10000); 
-        
     </script>
 </body>
 </html>
