@@ -173,7 +173,7 @@
                             if (posicionVisual === 3 || posicionVisual === 4) { // Materia y Profesor
                                 tablaHTML += `<td><div class="recortar-texto">${dato}</div></td>`;
                             } 
-                            else if (posicionVisual === 2) { // NUEVA POSICIÓN: Edificios
+                            else if (posicionVisual === 5) { // NUEVA POSICIÓN: Edificios
                                 let primeraLetra = dato.charAt(0).toUpperCase();
                                 if (diccionarioEdificios[primeraLetra]) {
                                     tablaHTML += `<td><img src="${diccionarioEdificios[primeraLetra]}" class="img-edificio">${dato.slice(1)}</td>`;
@@ -181,7 +181,7 @@
                                     tablaHTML += `<td>${dato}</td>`;
                                 }
                             }
-                            else if (posicionVisual === 5) { // Nivel Académico
+                            else if (posicionVisual === 2) { // Nivel Académico
                                 let nivelUpper = dato.toUpperCase();
                                 tablaHTML += `<td>${diccionarioNiveles[nivelUpper] ? `<img src="${diccionarioNiveles[nivelUpper]}" class="img-nivel">` : dato}</td>`;
                             }
