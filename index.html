@@ -147,7 +147,7 @@
             position: fixed;
             top: 1150px;
             left: 1607px;
-            text-align: ceter;
+            text-align: center;
             z-index: 100;
         }                
         #paginador {
@@ -160,8 +160,8 @@
         .totalmaterias-fijo {
             position: fixed;
             top: 1150px;
-            left: 100px;
-            text-align: ceter;
+            left: 120px;
+            text-align: center;
             z-index: 100;
         }                
         #totalmaterias {
@@ -173,7 +173,7 @@
         .actualizacion-fijo {
             position: fixed;
             top: 1150px;
-            left: 500px;
+            left: 600px;
             text-align: ceter;
             z-index: 100;
         }                
@@ -210,8 +210,8 @@
     <div class="reloj-fijo">
         <div id="reloj">00:00:00</div>
         <div id="paginador" class="paginador-fijo">PÁGINA 1 de 1</div>
-        <div id="totalmaterias" class="totalmaterias-fijo">PÁGINA 1 de 1</div>
-        <div id="actualizacion" class="actualizacion-fijo">PÁGINA 1 de 1</div>
+        <div id="totalmaterias" class="totalmaterias-fijo">MATERIAS ACTIVAS DSI: ${datoH2}</div>
+        <div id="actualizacion" class="actualizacion-fijo">ÙLTIMA ACTUALIZACIÒN</div>
     </div>
 
     <script>
@@ -226,17 +226,37 @@
         const diccionarioEdificios = { "I": "EdificioI.png", "N": "EdificioN.png", "K": "EdificioK.png", "L": "EdificioL.png", "P": "EdificioP.png", "Q": "EdificioQ.png" };
 
         async function cargarDatos() {
-            try {
-                const respuesta = await fetch(csvUrl + '&t=' + Date.now());
-                const texto = await respuesta.text();
-                const filasBrutas = texto.split('\n').filter(f => f.trim() !== '');
-                todasLasFilas = filasBrutas.slice(1); 
-                if(indicePagina === 0) mostrarPagina();
-            } catch (error) {
-                console.error("Error:", error);
-            }
-        }
-
+                    try {
+                        const respuesta = await fetch(csvUrl + '&t=' + Date.now());
+                        const texto = await respuesta.text();
+                        
+                        // 1. Convertimos el texto en un array de filas
+                        const filasBrutas = texto.split('\n').filter(f => f.trim() !== '');
+        
+                        // --- EXTRACTOR DE DATOS GLOBALES (H2 y H3) ---
+                        if (filasBrutas.length >= 3) {
+                            // Celda H2: Fila 2 (índice 1), Columna H (índice 7)
+                            const columnasH2 = filasBrutas[1].split(',');
+                            const datoH2 = columnasH2[7] ? columnasH2[7].trim() : '';
+                            
+                            // Celda H3: Fila 3 (índice 2), Columna H (índice 7)
+                            const columnasH3 = filasBrutas[2].split(',');
+                            const datoH3 = columnasH3[7] ? columnasH3[7].trim() : '';
+/*        
+                            // Inyectar en el HTML
+                            document.getElementById('totalmaterias').innerText = `MATERIAS ACTIVAS DSI: ${datoH2}`;
+                            document.getElementById('actualizacion').innerText = `ÚLTIMA ACTUALIZACIÓN: ${datoH3}`;
+                        }
+                        // ----------------------------------------------
+ */       
+                        // 2. Guardamos el resto para la tabla (excluyendo encabezados)
+                        todasLasFilas = filasBrutas.slice(1); 
+                        
+                        if(indicePagina === 0) mostrarPagina();
+                    } catch (error) {
+                        console.error("Error:", error);
+                    }
+                }
         function mostrarPagina() {
             if (todasLasFilas.length === 0) return;
 
