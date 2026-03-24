@@ -21,9 +21,14 @@
             overflow: hidden;
         }
 
-        /* --- 2. CONTENEDOR Y TABLA --- */
+        /* --- 2. CONTENEDORES --- */
+        #fids-header-container {
+            padding: 0 370px; 
+            margin-top: 82px;
+        }
+
         #fids-container {
-            margin-top: 188px; 
+            margin-top: 10px; 
             padding: 0 370px;
             width: 100%;
         }
@@ -38,33 +43,60 @@
             opacity: 0 !important;
         }
 
+        /* --- 3. TABLAS (Encabezado y Datos) --- */
         table {
             border-collapse: collapse;
             table-layout: fixed; 
-            width: 1650px; 
+            width: 1650px; /* Asegúrate que ambas midan lo mismo */
         }
 
-        td {
+        td, th {
             padding: 8px 10px;
-            font-size: 19px;
-            font-weight: 500;
-            color: #ffffff;
-            border-bottom: 1px solid transparent;
             vertical-align: middle; 
             height: 44px; 
             line-height: 1;
         }
 
-        /* --- 3. CONFIGURACIÓN REORDENADA DE COLUMNAS --- */
-        /* Col 1: Hora Inicio */ td:nth-child(1) { width: 150px; color: #ffffff; font-weight: bold; font-size: 33px; }
-        /* Col 2: Hora Fin */    td:nth-child(2) { width: 120px; color: #B3E5FC; font-size: 30px; }
-        /* Col 3: Nivel */ td:nth-child(3) { width: 220px; text-align: center; } 
-        /* Col 4: Materia */     td:nth-child(4) { width: 380px; text-align: left; color: #B3E5FC; font-weight: bold; font-size: 22px; }
-        /* Col 5: Profesor */    td:nth-child(5) { width: 340px; text-align: left; color: #ffffff; font-weight:  font-size: 22px; }
-        /* Col 6: EDIFICIO (NUEVA) */ td:nth-child(6) { width: 120px; text-align: center; color: #ffffff; font-size: 28px; font-weight: bold; }
-        /* Col 7: Estado */      td:nth-child(7) { width: 200px; text-align: left; }
+        /* Estilos específicos de Datos */
+        td {
+            font-size: 19px;
+            font-weight: 500;
+            color: #ffffff;
+            border-bottom: 1px solid transparent;
+        }
 
-        /* --- ESTILOS DE IMÁGENES --- */
+        /* Estilos específicos de Encabezado */
+        .tabla-encabezado {
+            background-color: transparent;
+        }
+        
+        .tabla-encabezado th {
+            text-align: left;
+            color: #ffd700;
+            font-size: 28px;
+            font-weight: bold;
+            border-bottom: 3px solid #ffd700;
+        }
+
+        /* --- 4. CONFIGURACIÓN DE COLUMNAS (Mismos anchos para ambas tablas) --- */
+        .col-1 { width: 150px; }
+        .col-2 { width: 120px; }
+        .col-3 { width: 220px; }
+        .col-4 { width: 380px; }
+        .col-5 { width: 340px; }
+        .col-6 { width: 120px; }
+        .col-7 { width: 320px; }
+
+        /* Alineaciones específicas */
+        td:nth-child(1), th:nth-child(1) { text-align: center; font-size: 33px; font-weight: bold; }
+        td:nth-child(2), th:nth-child(2) { text-align: center; color: #B3E5FC; font-size: 30px; }
+        td:nth-child(3), th:nth-child(3) { text-align: center; }
+        td:nth-child(4), th:nth-child(4) { text-align: left; color: #B3E5FC; font-weight: bold; font-size: 22px; }
+        td:nth-child(5), th:nth-child(5) { text-align: left; font-size: 22px; }
+        td:nth-child(6), th:nth-child(6) { text-align: center; font-size: 28px; font-weight: bold; }
+        td:nth-child(7), th:nth-child(7) { text-align: left; }
+
+        /* --- 5. COMPONENTES VISUALES --- */
         .img-estado { height: 44px; width: auto; vertical-align: middle; }
         .img-nivel { height: 30px; width: auto; vertical-align: middle; }
         .img-edificio { height: 44px; width: auto; vertical-align: middle; margin-right: 8px; }
@@ -75,9 +107,7 @@
           100% { opacity: 1; }
         }
 
-        .efecto-parpadeo {
-          animation: parpadeo 2.5s infinite ease-in-out;
-        }
+        .efecto-parpadeo { animation: parpadeo 2.5s infinite ease-in-out; }
 
         .recortar-texto {
             display: -webkit-box;
@@ -87,44 +117,24 @@
             text-overflow: ellipsis;
         }
 
-        /* Estilos para la tabla de encabezado */
-        .tabla-encabezado {
-            border-collapse: collapse;
-            table-layout: fixed;
-            width: 1550px;
-            background-color: transparent; /* rgba(0, 50, 100, 1); /* Un azul oscuro semi-transparente para resaltar */
+        /* --- 6. RELOJ Y PAGINADOR (FIJOS ABAJO) --- */
+        .reloj-fijo {
+            position: fixed;
+            bottom: 30px;
+            right: 60px;
+            text-align: right;
+            z-index: 100; /* Asegura que esté por encima de todo */
         }
-        
-        .tabla-encabezado th {
-            padding: 10px;
-            text-align: left;
-            color: #ffd700; /* Dorado para que resalte como el reloj */
-            font-size: 30px;
-            font-weight: bold;
-            border-bottom: 2px solid #ffd700;
-        }
-        
-        /* COPIAMOS LOS ANCHOS EXACTOS DE TUS COLUMNAS */
-        .tabla-encabezado th:nth-child(1), td:nth-child(1) { width: 150px; text-align: center; }
-        .tabla-encabezado th:nth-child(2), td:nth-child(2) { width: 120px; text-align: center; }
-        .tabla-encabezado th:nth-child(3), td:nth-child(3) { width: 220px; text-align: center; }
-        .tabla-encabezado th:nth-child(4), td:nth-child(4) { width: 380px; text-align: left; }
-        .tabla-encabezado th:nth-child(5), td:nth-child(5) { width: 340px; text-align: left; }
-        .tabla-encabezado th:nth-child(6), td:nth-child(6) { width: 120px; text-align: left; }
-        .tabla-encabezado th:nth-child(7), td:nth-child(7) { width: 200px; text-align: center; }
 
-        .reloj {
-            position: absolute;
-            top: 35px;
-            left: 60px;
-            font-size: 34px;
+        #reloj {
+            font-size: 48px;
             font-weight: bold;
             color: #ffd700;
-            text-align: right;
+            line-height: 1;
         }
 
         .paginador {
-            font-size: 18px;
+            font-size: 20px;
             color: #ffffff;
             font-weight: normal;
             margin-top: 5px;
@@ -133,29 +143,29 @@
 </head>
 <body>
 
-    <div id="fids-header-container" style="padding: 0 360px; margin-top: 82px;">
+    <div id="fids-header-container">
         <table class="tabla-encabezado">
             <thead>
                 <tr>
-                    <th>HORA</th>
-                    <th>FIN</th>
-                    <th>NIVEL</th>
-                    <th>ASIGNATURA</th>
-                    <th>DOCENTE</th>
-                    <th>LUGAR</th>
-                    <th>ESTADO</th>
+                    <th class="col-1">HORA</th>
+                    <th class="col-2">FIN</th>
+                    <th class="col-3">NIVEL</th>
+                    <th class="col-4">ASIGNATURA</th>
+                    <th class="col-5">DOCENTE</th>
+                    <th class="col-6">LUGAR</th>
+                    <th class="col-7">ESTADO</th>
                 </tr>
             </thead>
         </table>
     </div>
 
-    <div class="reloj">
+    <div id="fids-container">
+        <div id="tabla-datos">Cargando programación...</div>
+    </div>
+
+    <div class="reloj-fijo">
         <div id="reloj">00:00:00</div>
         <div id="paginador" class="paginador">PÁGINA 1 de 1</div>
-    </div>
-    
-    <div id="fids-container" style="margin-top: 30px; padding: 0 370px;">
-        <div id="tabla-datos">Cargando programación...</div>
     </div>
 
     <script>
@@ -185,8 +195,6 @@
             if (todasLasFilas.length === 0) return;
 
             const contenedor = document.getElementById('tabla-datos');
-            
-            // 1. Iniciar desvanecimiento
             contenedor.classList.add('fade-out');
 
             setTimeout(() => {
@@ -202,38 +210,34 @@
                 for (let i = 0; i < filasPorPagina; i++) {
                     if (filasActuales[i]) {
                         const columnas = filasActuales[i].split(',');
-                        
-                        // Mapeo manual para mover la columna 6 (índice 5) a la posición 3
-                        // El nuevo orden de índices será: 0, 1, 5, 2, 3, 4, 6
+                        // Orden: HoraIni, HoraFin, Nivel, Materia, Profesor, Edificio, Estado
                         const ordenColumnas = [0, 1, 4, 2, 3, 5, 6];
                         
                         tablaHTML += '<tr>';
                         ordenColumnas.forEach((indiceOriginal, posicionVisual) => {
                             let dato = columnas[indiceOriginal] ? columnas[indiceOriginal].trim() : '';
                             
-                            // Lógica por POSICIÓN VISUAL
-                            if (posicionVisual === 3 || posicionVisual === 4) { // Materia y Profesor
-                                tablaHTML += `<td><div class="recortar-texto">${dato}</div></td>`;
+                            // Usamos las clases de ancho definidas arriba para consistencia
+                            let claseAncho = `col-${posicionVisual + 1}`;
+
+                            if (posicionVisual === 3 || posicionVisual === 4) { 
+                                tablaHTML += `<td class="${claseAncho}"><div class="recortar-texto">${dato}</div></td>`;
                             } 
-                            else if (posicionVisual === 5) { // NUEVA POSICIÓN: Edificios
-                                let primeraLetra = dato.charAt(0).toUpperCase();
-                                if (diccionarioEdificios[primeraLetra]) {
-                                    tablaHTML += `<td><img src="${diccionarioEdificios[primeraLetra]}" class="img-edificio">${dato.slice(1)}</td>`;
-                                } else {
-                                    tablaHTML += `<td>${dato}</td>`;
-                                }
+                            else if (posicionVisual === 5) { 
+                                let letra = dato.charAt(0).toUpperCase();
+                                tablaHTML += `<td class="${claseAncho}">${diccionarioEdificios[letra] ? `<img src="${diccionarioEdificios[letra]}" class="img-edificio">${dato.slice(1)}` : dato}</td>`;
                             }
-                            else if (posicionVisual === 2) { // Nivel Académico
+                            else if (posicionVisual === 2) { 
                                 let nivelUpper = dato.toUpperCase();
-                                tablaHTML += `<td>${diccionarioNiveles[nivelUpper] ? `<img src="${diccionarioNiveles[nivelUpper]}" class="img-nivel">` : dato}</td>`;
+                                tablaHTML += `<td class="${claseAncho}">${diccionarioNiveles[nivelUpper] ? `<img src="${diccionarioNiveles[nivelUpper]}" class="img-nivel">` : dato}</td>`;
                             }
-                            else if (posicionVisual === 6) { // Estados
-                                let estadoUpper = dato.toUpperCase();
-                                let claseExtra = (estadoUpper === "FINALIZANDO" || estadoUpper === "INICIANDO") ? "efecto-parpadeo" : "";
-                                tablaHTML += `<td>${diccionarioEstados[estadoUpper] ? `<img src="${diccionarioEstados[estadoUpper]}" class="img-estado ${claseExtra}">` : dato}</td>`;
+                            else if (posicionVisual === 6) { 
+                                let estUpper = dato.toUpperCase();
+                                let parpadea = (estUpper === "FINALIZANDO" || estUpper === "INICIANDO") ? "efecto-parpadeo" : "";
+                                tablaHTML += `<td class="${claseAncho}">${diccionarioEstados[estUpper] ? `<img src="${diccionarioEstados[estUpper]}" class="img-estado ${parpadea}">` : dato}</td>`;
                             }
                             else {
-                                tablaHTML += `<td>${dato}</td>`;
+                                tablaHTML += `<td class="${claseAncho}">${dato}</td>`;
                             }
                         });
                         tablaHTML += '</tr>';
@@ -244,12 +248,10 @@
 
                 tablaHTML += '</tbody></table>';
                 contenedor.innerHTML = tablaHTML;
-
-                // 2. Quitar desvanecimiento
                 contenedor.classList.remove('fade-out');
 
                 indicePagina = (indicePagina + 1) % totalPaginas;
-            }, 500); // El tiempo del timeout debe coincidir con el transition del CSS
+            }, 500);
         }
 
         function actualizarReloj() {
