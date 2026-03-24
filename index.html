@@ -244,21 +244,32 @@
                         
                         // 1. Convertimos el texto en un array de filas
                         const filasBrutas = texto.split('\n').filter(f => f.trim() !== '');
-        
-                        // --- EXTRACTOR DE DATOS GLOBALES (H2 y H3) ---
-                        if (filasBrutas.length >= 3) {
-                            // Celda H2: Fila 2 (índice 1), Columna H (índice 7)
-                            const columnasH2 = filasBrutas[1].split(',');
-                            const datoH2 = columnasH2[7] ? columnasH2[7].trim() : '';
-                            
-                            // Celda H3: Fila 3 (índice 2), Columna H (índice 7)
-                            const columnasH3 = filasBrutas[2].split(',');
-                            const datoH3 = columnasH3[7] ? columnasH3[7].trim() : '';
 
-                            // Inyectar en el HTML
-                            document.getElementById('totalmaterias').innerText = `MATERIAS ACTIVAS DSI: ${datoH2}`;
-                            document.getElementById('actualizacion').innerText = `ÚLTIMA ACTUALIZACIÓN: ${datoH3}`;
-     
+                        // --- EXTRACTOR DE DATOS GLOBALES (H2 y H3) ---
+                        if (filasBrutas && filasBrutas.length >= 3) {
+                            try {
+                                // Extraer H2
+                                const fila2 = filasBrutas[1] || "";
+                                const columnasH2 = fila2.split(',');
+                                const datoH2 = (columnasH2[7] || "").trim();
+                                
+                                // Extraer H3
+                                const fila3 = filasBrutas[2] || "";
+                                const columnasH3 = fila3.split(',');
+                                const datoH3 = (columnasH3[7] || "").trim();
+                        
+                                // Inyectar con seguridad (verificando que el elemento existe en el HTML)
+                                const elTotal = document.getElementById('totalmaterias');
+                                const elActualizacion = document.getElementById('actualizacion');
+                        
+                                if (elTotal) elTotal.innerText = `MATERIAS ACTIVAS DSI: ${datoH2}`;
+                                if (elActualizacion) elActualizacion.innerText = `ÚLTIMA ACTUALIZACIÓN: ${datoH3}`;
+                                
+                            } catch (e) {
+                                console.warn("Error procesando celdas H2/H3, pero el FIDS continúa:", e);
+                            }
+                        }
+                        
                         // 2. Guardamos el resto para la tabla (excluyendo encabezados)
                         todasLasFilas = filasBrutas.slice(1); 
                         
