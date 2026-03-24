@@ -61,10 +61,10 @@
         /* --- 5. CONFIGURACIÓN INDIVIDUAL DE COLUMNAS --- */
         td:nth-child(1) { width: 160px; color: #ffffff; font-weight: bold; font-size: 33px; }
         td:nth-child(2) { width: 140px; color: #B3E5FC; font-size: 30px; }
-        td:nth-child(3) { width: 350px; color: #ffffff; font-size: 22px; }
-        td:nth-child(4) { width: 340px; color: #B3E5FC; font-weight: bold; font-size: 22px; }
-        td:nth-child(5) { width: 210px; text-align: center; } 
-        td:nth-child(6) { width: 120px; text-align: center; color: #ffffff; font-size: 30px; } 
+        td:nth-child(3) { width: 120px; text-align: center; color: #ffffff; font-size: 30px; } 
+        td:nth-child(4) { width: 350px; color: #ffffff; font-size: 22px; }
+        td:nth-child(5) { width: 340px; color: #B3E5FC; font-weight: bold; font-size: 22px; }
+        td:nth-child(6) { width: 210px; text-align: center; } 
         td:nth-child(7) { width: 200px; text-align: left; }
 
         /* --- ESTILOS DE IMÁGENES Y UI --- */
@@ -180,22 +180,23 @@
                     
                     for(let j=0; j<7; j++) {
                         let dato = columnas[j] ? columnas[j].trim() : '';
-                        
-                        if (j === 1 || j === 2) {
-                            tablaHTML += `<td><div class="recortar-texto">${dato}</div></td>`;
-                        } 
-                        else if (j === 4) { // Nivel Académico
-                            let nivelUpper = dato.toUpperCase();
-                            if (diccionarioNiveles[nivelUpper]) {
-                                tablaHTML += `<td><img src="${diccionarioNiveles[nivelUpper]}" class="img-nivel"></td>`;
+
+                        else if (j === 2) { // Edificios
+                            let primeraLetra = dato.charAt(0).toUpperCase();
+                            if (diccionarioEdificios[primeraLetra]) {
+                                tablaHTML += `<td><img src="${diccionarioEdificios[primeraLetra]}" class="img-edificio">${dato.slice(1)}</td>`;
                             } else {
                                 tablaHTML += `<td>${dato}</td>`;
                             }
                         }
-                        else if (j === 5) { // Edificios
-                            let primeraLetra = dato.charAt(0).toUpperCase();
-                            if (diccionarioEdificios[primeraLetra]) {
-                                tablaHTML += `<td><img src="${diccionarioEdificios[primeraLetra]}" class="img-edificio">${dato.slice(1)}</td>`;
+                        
+                        if (j === 3 || j === 4) {
+                            tablaHTML += `<td><div class="recortar-texto">${dato}</div></td>`;
+                        } 
+                        else if (j === 5) { // Nivel Académico
+                            let nivelUpper = dato.toUpperCase();
+                            if (diccionarioNiveles[nivelUpper]) {
+                                tablaHTML += `<td><img src="${diccionarioNiveles[nivelUpper]}" class="img-nivel"></td>`;
                             } else {
                                 tablaHTML += `<td>${dato}</td>`;
                             }
