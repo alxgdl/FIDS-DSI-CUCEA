@@ -64,19 +64,13 @@
         td:nth-child(3) { width: 350px; color: #ffffff; font-size: 22px; }
         td:nth-child(4) { width: 340px; color: #B3E5FC; font-weight: bold; font-size: 22px; }
         td:nth-child(5) { width: 210px; text-align: center; } 
-        td:nth-child(6) { width: 120px; text-align: center; color: #ffffff; font-size: 30px; } /* Columna Edificios */
+        td:nth-child(6) { width: 120px; text-align: center; color: #ffffff; font-size: 30px; } 
         td:nth-child(7) { width: 200px; text-align: left; }
 
-        /* --- ESTILOS DE IMÁGENES --- */
+        /* --- ESTILOS DE IMÁGENES Y UI --- */
         .img-estado { height: 44px; width: auto; display: inline-block; vertical-align: middle; }
         .img-nivel { height: 30px; width: auto; display: inline-block; vertical-align: middle; }
-        
-        .img-edificio { 
-            height: 40px; /* Un poco más grande para los círculos */
-            width: auto; 
-            display: inline-block; 
-            vertical-align: middle; 
-        }
+        .img-edificio { height: 40px; width: auto; display: inline-block; vertical-align: middle; }
 
         .reloj {
             position: absolute;
@@ -85,30 +79,46 @@
             font-size: 34px;
             font-weight: bold;
             color: #ffd700;
+            text-align: right;
+        }
+
+        .paginador {
+            font-size: 18px;
+            color: #ffffff;
+            font-weight: normal;
+            margin-top: 5px;
         }
         
-        /* Definimos la animación de parpadeo */
         @keyframes parpadeo {
           0% { opacity: 1; }
           50% { opacity: 0.3; }
           100% { opacity: 1; }
         }
 
-/* Creamos una clase para aplicar la animación */
-.efecto-parpadeo {
-  animation: parpadeo 2.5s infinite ease-in-out;
-}
+        .efecto-parpadeo {
+          animation: parpadeo 2.5s infinite ease-in-out;
+        }
     </style>
 </head>
 <body>
 
-    <div id="reloj" class="reloj">00:00:00</div>
+    <div class="reloj">
+        <div id="reloj">00:00:00</div>
+        <div id="paginador" class="paginador">PÁGINA 1 de 1</div>
+    </div>
 
     <div id="fids-container">
         <div id="tabla-datos">Cargando programación...</div>
     </div>
 
     <script>
+        const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTtJ6ZlMM6skUMzxHY2LYmtU3WBojxBxxP1k7_exlFwS4THkhsC9OAt6Iq4NjxoXDvnugZwRzTjA9ZI/pub?gid=1178925333&single=true&output=csv';
+        
+        // Variables de Paginación
+        const filasPorPagina = 15;
+        let todasLasFilas = [];
+        let indicePagina = 0;
+
         const diccionarioEstados = {
             "EN CURSO": "BotonEncurso.png",
             "INICIANDO": "BotonIniciando.png",
@@ -123,88 +133,115 @@
             "DOCTORADO": "botonDoctorado.png"
         };
 
-        // --- DICCIONARIO PARA EDIFICIOS (COLUMNA 6) ---
         const diccionarioEdificios = {
             "I": "EdificioI.png",
             "N": "EdificioN.png",
             "K": "EdificioK.png",
             "L": "EdificioL.png",
+            "P": "EdificioP.png",
+            "Q": "EdificioQ.png"
         };
-
-        const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTtJ6ZlMM6skUMzxHY2LYmtU3WBojxBxxP1k7_exlFwS4THkhsC9OAt6Iq4NjxoXDvnugZwRzTjA9ZI/pub?gid=1178925333&single=true&output=csv';
-        const maxFilas = 16; 
 
         async function cargarDatos() {
             try {
                 const respuesta = await fetch(csvUrl + '&t=' + Date.now());
                 const texto = await respuesta.text();
-                const filas = texto.split('\n');
+                // Convertir a array y limpiar filas vacías
+                const filasBrutas = texto.split('\n').filter(f => f.trim() !== '');
                 
-                let tablaHTML = '<table><tbody>';
-
-                for (let i = 1; i <= maxFilas; i++) {
-                    if (filas[i]) {
-                        const columnas = filas[i].split(',');
-                        tablaHTML += '<tr>';
-                        
-                        for(let j=0; j<7; j++) {
-                            let dato = columnas[j] ? columnas[j].trim() : '';
-                            
-                            if (j === 1 || j === 2) {
-                                tablaHTML += `<td><div class="recortar-texto">${dato}</div></td>`;
-                            } 
-                            else if (j === 4) { // Nivel Académico
-                                let nivelUpper = dato.toUpperCase();
-                                if (diccionarioNiveles[nivelUpper]) {
-                                    tablaHTML += `<td><img src="${diccionarioNiveles[nivelUpper]}" class="img-nivel"></td>`;
-                                } else {
-                                    tablaHTML += `<td>${dato}</td>`;
-                                }
-                            }
-                            else if (j === 5) { // NUEVA LÓGICA: Edificios
-                                let primeraLetra = dato.charAt(0).toUpperCase();
-                                if (diccionarioEdificios[primeraLetra]) {
-                                    tablaHTML += `<td><img src="${diccionarioEdificios[primeraLetra]}" class="img-edificio">`+`${dato.slice(1)}</td>`;
-                                } else {
-                                    tablaHTML += `<td>${dato}</td>`;
-                                }
-                            }
-                            else if (j === 6) {
-                                let estadoUpper = dato.toUpperCase();
-                                if (diccionarioEstados[estadoUpper]) {
-                                    // Lógica de parpadeo: si es "EN CURSO", añade la clase CSS
-                                    let claseExtra = (estadoUpper === "FINALIZANDO" || estadoUpper === "INICIANDO") ? "efecto-parpadeo" : "";
-                                    tablaHTML += `<td><img src="${diccionarioEstados[estadoUpper]}" class="img-estado ${claseExtra}"></td>`;
-                                } else {
-                                    tablaHTML += `<td>${dato}</td>`;
-                                }
-                            }
-                            else {
-                                tablaHTML += `<td>${dato}</td>`;
-                            }
-                        }
-                        tablaHTML += '</tr>';
-                    } else {
-                        tablaHTML += '<tr style="height:60px"><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>';
-                    }
-                }
-
-                tablaHTML += '</tbody></table>';
-                document.getElementById('tabla-datos').innerHTML = tablaHTML;
-
+                // Guardamos todas menos la cabecera
+                todasLasFilas = filasBrutas.slice(1); 
+                
+                // Si es la primera vez que carga, mostramos de inmediato
+                if(indicePagina === 0) mostrarPagina();
+                
             } catch (error) {
                 console.error("Error al obtener datos:", error);
             }
+        }
+
+        function mostrarPagina() {
+            if (todasLasFilas.length === 0) return;
+
+            const totalPaginas = Math.ceil(todasLasFilas.length / filasPorPagina);
+            const inicio = indicePagina * filasPorPagina;
+            const fin = inicio + filasPorPagina;
+            const filasActuales = todasLasFilas.slice(inicio, fin);
+
+            // Actualizar el texto del paginador
+            document.getElementById('paginador').innerText = `PÁGINA ${indicePagina + 1} de ${totalPaginas}`;
+
+            let tablaHTML = '<table><tbody>';
+
+            for (let i = 0; i < filasPorPagina; i++) {
+                if (filasActuales[i]) {
+                    const columnas = filasActuales[i].split(',');
+                    tablaHTML += '<tr>';
+                    
+                    for(let j=0; j<7; j++) {
+                        let dato = columnas[j] ? columnas[j].trim() : '';
+                        
+                        if (j === 1 || j === 2) {
+                            tablaHTML += `<td><div class="recortar-texto">${dato}</div></td>`;
+                        } 
+                        else if (j === 4) { // Nivel Académico
+                            let nivelUpper = dato.toUpperCase();
+                            if (diccionarioNiveles[nivelUpper]) {
+                                tablaHTML += `<td><img src="${diccionarioNiveles[nivelUpper]}" class="img-nivel"></td>`;
+                            } else {
+                                tablaHTML += `<td>${dato}</td>`;
+                            }
+                        }
+                        else if (j === 5) { // Edificios
+                            let primeraLetra = dato.charAt(0).toUpperCase();
+                            if (diccionarioEdificios[primeraLetra]) {
+                                tablaHTML += `<td><img src="${diccionarioEdificios[primeraLetra]}" class="img-edificio">${dato.slice(1)}</td>`;
+                            } else {
+                                tablaHTML += `<td>${dato}</td>`;
+                            }
+                        }
+                        else if (j === 6) { // Estados
+                            let estadoUpper = dato.toUpperCase();
+                            if (diccionarioEstados[estadoUpper]) {
+                                let claseExtra = (estadoUpper === "FINALIZANDO" || estadoUpper === "INICIANDO") ? "efecto-parpadeo" : "";
+                                tablaHTML += `<td><img src="${diccionarioEstados[estadoUpper]}" class="img-estado ${claseExtra}"></td>`;
+                            } else {
+                                tablaHTML += `<td>${dato}</td>`;
+                            }
+                        }
+                        else {
+                            tablaHTML += `<td>${dato}</td>`;
+                        }
+                    }
+                    tablaHTML += '</tr>';
+                } else {
+                    // Fila vacía para mantener la estructura de 15 filas siempre
+                    tablaHTML += '<tr style="height:60px"><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>';
+                }
+            }
+
+            tablaHTML += '</tbody></table>';
+            document.getElementById('tabla-datos').innerHTML = tablaHTML;
+
+            // Avanzar a la siguiente página para el próximo ciclo
+            indicePagina = (indicePagina + 1) % totalPaginas;
         }
 
         function actualizarReloj() {
             document.getElementById('reloj').innerText = new Date().toLocaleTimeString();
         }
 
+        // Inicialización
         actualizarReloj();
         setInterval(actualizarReloj, 1000);
+        
         cargarDatos();
-        setInterval(cargarDatos, 10000); 
+        // Recargar datos del servidor cada 30 segundos (en segundo plano)
+        setInterval(cargarDatos, 30000); 
+
+        // Cambiar de página visualmente cada 10 segundos
+        setInterval(mostrarPagina, 10000); 
+        
     </script>
 </body>
 </html>
