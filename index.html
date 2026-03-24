@@ -69,24 +69,6 @@
         .img-nivel { height: 30px; width: auto; vertical-align: middle; }
         .img-edificio { height: 44px; width: auto; vertical-align: middle; margin-right: 8px; }
 
-        .reloj-inferior {
-            position: absolute;
-            bottom: 40px;   /* Distancia desde abajo */
-            right: 80px;    /* Distancia desde la derecha */
-            text-align: right;
-            font-size: 45px; /* Un poco más grande para que destaque abajo */
-            font-weight: bold;
-            color: #ffd700;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5); /* Sombra para que se lea bien sobre el fondo */
-        }
-        
-        .paginador {
-            font-size: 20px;
-            color: #ffffff;
-            font-weight: normal;
-            margin-top: -5px; /* Ajuste para que quede pegadito al reloj */
-        }
-        
         @keyframes parpadeo {
           0% { opacity: 1; }
           50% { opacity: 0.3; }
@@ -130,6 +112,25 @@
         .tabla-encabezado th:nth-child(5), td:nth-child(5) { width: 340px; text-align: left; }
         .tabla-encabezado th:nth-child(6), td:nth-child(6) { width: 120px; text-align: left; }
         .tabla-encabezado th:nth-child(7), td:nth-child(7) { width: 200px; text-align: center; }
+
+        .reloj-inferior {
+            position: absolute;
+            bottom: 40px;   /* Distancia desde abajo */
+            right: 80px;    /* Distancia desde la derecha */
+            text-align: right;
+            font-size: 45px; /* Un poco más grande para que destaque abajo */
+            font-weight: bold;
+            color: #ffd700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5); /* Sombra para que se lea bien sobre el fondo */
+        }
+        
+        .paginador {
+            font-size: 20px;
+            color: #ffffff;
+            font-weight: normal;
+            margin-top: -5px; /* Ajuste para que quede pegadito al reloj */
+        }
+ 
     </style>
 </head>
 <body>
