@@ -226,6 +226,18 @@
         const diccionarioEdificios = { "I": "EdificioI.png", "N": "EdificioN.png", "K": "EdificioK.png", "L": "EdificioL.png", "P": "EdificioP.png", "Q": "EdificioQ.png" };
 
         async function cargarDatos() {
+            try {
+                const respuesta = await fetch(csvUrl + '&t=' + Date.now());
+                const texto = await respuesta.text();
+                const filasBrutas = texto.split('\n').filter(f => f.trim() !== '');
+                todasLasFilas = filasBrutas.slice(1); 
+                if(indicePagina === 0) mostrarPagina();
+            } catch (error) {
+                console.error("Error:", error);
+            }
+        }
+/+        
+        async function cargarDatos() {
                     try {
                         const respuesta = await fetch(csvUrl + '&t=' + Date.now());
                         const texto = await respuesta.text();
@@ -251,6 +263,8 @@
                         console.error("Error:", error);
                     }
                 }
+*/
+    
         function mostrarPagina() {
             if (todasLasFilas.length === 0) return;
 
