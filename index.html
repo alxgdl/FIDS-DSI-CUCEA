@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FIDS CUCEA - Paginado con Fade</title>
+    <title>FIDS CUCEA - Paginado con Fade RealTime</title>
     <style>
         /* --- 1. CONFIGURACIÓN DEL FONDO --- */
         body {
@@ -12,8 +12,7 @@
             background-position: top left;
             background-repeat: no-repeat;
             background-attachment: fixed;
-            background-color: rgba(0, 0, 0, 0.3); 
-            background-blend-mode: darken;
+            background-color: #000; 
             color: white;
             font-family: 'Segoe UI', Arial, sans-serif;
             margin: 0;
@@ -57,21 +56,19 @@
             line-height: 1;
         }
 
-        /* --- 4. ESTILOS EXCLUSIVOS DEL ENCABEZADO (Diferente a los datos) --- */
         .tabla-encabezado {
             background-color: transparent;
         }
         
         .tabla-encabezado th {
             color: #ffd700; /* Dorado */
-            font-size: 30px; /* Tamaño específico para títulos */
+            font-size: 30px; 
             font-weight: 800;
             text-transform: uppercase;
             border-bottom: 3px solid #ffd700;
             text-align: left;
         }
 
-        /* Alineaciones específicas para los títulos */
         .tabla-encabezado th:nth-child(1),
         .tabla-encabezado th:nth-child(2),
         .tabla-encabezado th:nth-child(3),
@@ -80,24 +77,21 @@
             text-align: center;
         }
 
-        /* --- 5. ESTILOS EXCLUSIVOS DE LOS DATOS --- */
+        /* --- 5. ESTILOS DE DATOS --- */
         #tabla-datos td {
             font-size: 19px;
             font-weight: 500;
             color: #ffffff;
-            border-bottom: 0px solid rgba(255, 255, 255, 0.1);
         }
 
-        /* Personalización de columnas de DATOS (sin afectar th) */
-        #tabla-datos td:nth-child(1) { text-align: center; font-size: 33px; font-weight: bold; } /* Hora */
-        #tabla-datos td:nth-child(2) { text-align: center; color: #B3E5FC; font-size: 28px; }   /* Fin */
-        #tabla-datos td:nth-child(3) { text-align: center; }                                   /* Nivel */
-        #tabla-datos td:nth-child(4) { text-align: left; color: #B3E5FC; font-weight: bold; font-size: 22px; } /* Asignatura */
-        #tabla-datos td:nth-child(5) { text-align: left; font-size: 22px; }                    /* Docente */
-        #tabla-datos td:nth-child(6) { text-align: center; font-size: 28px; font-weight: bold; } /* Lugar */
-        #tabla-datos td:nth-child(7) { text-align: center; }                                     /* Estado */
+        #tabla-datos td:nth-child(1) { text-align: center; font-size: 33px; font-weight: bold; } 
+        #tabla-datos td:nth-child(2) { text-align: center; color: #B3E5FC; font-size: 28px; }   
+        #tabla-datos td:nth-child(3) { text-align: center; }                                   
+        #tabla-datos td:nth-child(4) { text-align: left; color: #B3E5FC; font-weight: bold; font-size: 22px; } 
+        #tabla-datos td:nth-child(5) { text-align: left; font-size: 22px; }                    
+        #tabla-datos td:nth-child(6) { text-align: center; font-size: 28px; font-weight: bold; } 
+        #tabla-datos td:nth-child(7) { text-align: center; }                                     
 
-        /* --- 6. CONFIGURACIÓN DE ANCHOS (Consistente para ambas tablas) --- */
         .col-1 { width: 150px; }
         .col-2 { width: 120px; }
         .col-3 { width: 220px; }
@@ -106,7 +100,6 @@
         .col-6 { width: 150px; }
         .col-7 { width: 180px; }
 
-        /* --- 7. COMPONENTES VISUALES --- */
         .img-estado { height: 44px; width: auto; vertical-align: middle; }
         .img-nivel { height: 30px; width: auto; vertical-align: middle; }
         .img-edificio { height: 44px; width: auto; vertical-align: middle; margin-right: 8px; }
@@ -116,7 +109,6 @@
           50% { opacity: 0.3; }
           100% { opacity: 1; }
         }
-
         .efecto-parpadeo { animation: parpadeo 2.5s infinite ease-in-out; }
 
         .recortar-texto {
@@ -127,61 +119,18 @@
             text-overflow: ellipsis;
         }
 
-        /* --- 8. RELOJ Y PAGINADOR --- */
-        .reloj-fijo {
-            position: fixed;
-            top: 1152px;
-            left: 1265px;
-            text-align: center;
-            z-index: 100;
-        }
-
-        #reloj {
-            font-size: 35px;
-            font-weight: bold;
-            color: #ffffff; /* #ffd700; */
-            line-height: 1;
-        }
+        /* --- 8. FOOTER FIJO --- */
+        .reloj-fijo { position: fixed; top: 1152px; left: 1265px; text-align: center; z-index: 100; }
+        #reloj { font-size: 35px; font-weight: bold; color: #ffffff; line-height: 1; }
         
-        .paginador-fijo {
-            position: fixed;
-            top: 1150px;
-            left: 1565px;
-            text-align: center;
-            z-index: 100;
-        }                
-        #paginador {
-            font-size: 33px;
-            color: #ffffff;
-            font-weight: bold;
-            /* margin-top: 5px; */
-        } 
+        .paginador-fijo { position: fixed; top: 1150px; left: 1565px; text-align: center; z-index: 100; }                
+        #paginador { font-size: 33px; color: #ffffff; font-weight: bold; } 
 
-        .totalmaterias-fijo {
-            position: fixed;
-            top: 1150px;
-            left: 145px;
-            text-align: center;
-            z-index: 100;
-        }                
-        #totalmaterias {
-            font-size: 33px;
-            color: #ffffff;
-            font-weight: bold;
-        } 
+        .totalmaterias-fijo { position: fixed; top: 1150px; left: 145px; z-index: 100; }                
+        #totalmaterias { font-size: 33px; color: #ffffff; font-weight: bold; } 
 
-        .actualizacion-fijo {
-            position: fixed;
-            top: 1150px;
-            left: 680px;
-            text-align: ceter;
-            z-index: 100;
-        }                
-        #actualizacion {
-            font-size: 33px;
-            color: #ffffff;
-            font-weight: bold;
-        }
+        .actualizacion-fijo { position: fixed; top: 1150px; left: 680px; z-index: 100; }                
+        #actualizacion { font-size: 33px; color: #ffffff; font-weight: bold; }
         
     </style>
 </head>
@@ -204,82 +153,67 @@
     </div>
 
     <div id="fids-container">
-        <div id="tabla-datos">Cargando programación...</div>
+        <div id="tabla-datos">Iniciando sistema FIDS...</div>
     </div>
 
-    <div class="reloj-fijo">
-        <div id="reloj">00:00:00</div>
-        <div id="paginador" class="paginador-fijo">PÁGINA 1 de ?</div>
-        <div id="totalmaterias" class="totalmaterias-fijo">MATERIAS ACTIVAS DSI:</div>
-        <div id="actualizacion" class="actualizacion-fijo">ÚLTIMA ACTUALIZACIÓN</div>
+    <div class="footer-info">
+        <div class="totalmaterias-fijo"><div id="totalmaterias">MATERIAS: --</div></div>
+        <div class="actualizacion-fijo"><div id="actualizacion">SINCRONIZANDO...</div></div>
+        <div class="reloj-fijo"><div id="reloj">00:00:00</div></div>
+        <div class="paginador-fijo"><div id="paginador">PÁGINA --</div></div>
     </div>
 
     <script>
-        const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTtJ6ZlMM6skUMzxHY2LYmtU3WBojxBxxP1k7_exlFwS4THkhsC9OAt6Iq4NjxoXDvnugZwRzTjA9ZI/pub?gid=52319349&single=true&output=csv';
+        // URL DE EXPORTACIÓN (Tiempo Real)
+        const csvUrl = 'https://docs.google.com/spreadsheets/d/1TtJ6ZlMM6skUMzxHY2LYmtU3WBojxBxxP1k7_exlFwS4THkhsC9OAt6Iq4NjxoXDvnugZwRzTjA9ZI/export?format=csv&gid=52319349';
         
         const filasPorPagina = 15;
         let todasLasFilas = [];
         let indicePagina = 0;
+        let ultimoContenidoCSV = ""; 
 
         const diccionarioEstados = { "EN CURSO": "BotonEncurso.png", "INICIANDO": "BotonIniciando.png", "FINALIZANDO": "BotonFinalizando.png", "PROGRAMADA": "BotonProgramada.png" };
         const diccionarioNiveles = { "T.S.U.": "botonTSU.png", "LICENCIATURA": "botonLicenciatura.png", "MAESTRIA": "botonMaestria.png", "DOCTORADO": "botonDoctorado.png" };
         const diccionarioEdificios = { "I": "EdificioI.png", "N": "EdificioN.png", "K": "EdificioK.png", "L": "EdificioL.png", "P": "EdificioP.png", "Q": "EdificioQ.png" };
-/*
+
         async function cargarDatos() {
             try {
-                const respuesta = await fetch(csvUrl + '&t=' + Date.now());
+                // Fetch con Cache-Buster dinámico para datos frescos cada 60s
+                const respuesta = await fetch(`${csvUrl}&t=${Date.now()}`, {
+                    cache: "no-store",
+                    headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' }
+                });
+                
                 const texto = await respuesta.text();
-                const filasBrutas = texto.split('\n').filter(f => f.trim() !== '');
-                todasLasFilas = filasBrutas.slice(1); 
-                if(indicePagina === 0) mostrarPagina();
-            } catch (error) {
-                console.error("Error:", error);
-            }
-        }
-*/
-        async function cargarDatos() {
-                    try {
-                        const respuesta = await fetch(csvUrl + '&t=' + Date.now());
-                        const texto = await respuesta.text();
-                        
-                        // 1. Convertimos el texto en un array de filas
-                        const filasBrutas = texto.split('\n').filter(f => f.trim() !== '');
+                const textoLimpio = texto.replace(/^\uFEFF/, "").trim();
 
-                        // --- EXTRACTOR DE DATOS GLOBALES (H2 y H3) ---
-                        if (filasBrutas && filasBrutas.length >= 3) {
-                            try {
-                                // Extraer H2
-                                const fila2 = filasBrutas[1] || "";
-                                const columnasH2 = fila2.split(',');
-                                const datoH2 = (columnasH2[7] || "").trim();
-                                
-                                // Extraer H3
-                                const fila3 = filasBrutas[2] || "";
-                                const columnasH3 = fila3.split(',');
-                                const datoH3 = (columnasH3[7] || "").trim();
-                        
-                                // Inyectar con seguridad (verificando que el elemento existe en el HTML)
-                                const elTotal = document.getElementById('totalmaterias');
-                                const elActualizacion = document.getElementById('actualizacion');
-                        
-                                if (elTotal) elTotal.innerText = `MATERIAS ACTIVAS DSI: ${datoH2}`;
-                                if (elActualizacion) elActualizacion.innerText = `ÚLTIMA ACTUALIZACIÓN: ${datoH3}`;
-                                
-                            } catch (e) {
-                                console.warn("Error procesando celdas H2/H3, pero el FIDS continúa:", e);
-                            }
-                        }
-                        
-                        // 2. Guardamos el resto para la tabla (excluyendo encabezados)
-                        todasLasFilas = filasBrutas.slice(1); 
-                        
-                        if(indicePagina === 0) mostrarPagina();
-                    } catch (error) {
-                        console.error("Error:", error);
-                    }
+                // Evitar procesar si los datos no han cambiado en el Sheets
+                if (textoLimpio === ultimoContenidoCSV) return;
+                ultimoContenidoCSV = textoLimpio;
+
+                const filasBrutas = textoLimpio.split('\n').filter(f => f.trim() !== '');
+
+                // Datos Globales (Encabezados H2 y H3)
+                if (filasBrutas.length >= 3) {
+                    const colH2 = filasBrutas[1].split(',');
+                    const colH3 = filasBrutas[2].split(',');
+                    document.getElementById('totalmaterias').innerText = `MATERIAS ACTIVAS DSI: ${(colH2[7] || "").replace(/"/g, "").trim()}`;
+                    document.getElementById('actualizacion').innerText = `ÚLTIMA ACTUALIZACIÓN: ${(colH3[7] || "").replace(/"/g, "").trim()}`;
                 }
 
-    
+                // Guardar datos (Saltamos la primera fila de nombres de columna)
+                todasLasFilas = filasBrutas.slice(1); 
+                
+                // Si es la primera carga, mostramos de inmediato
+                if (document.getElementById('tabla-datos').innerText.includes("Iniciando")) {
+                    mostrarPagina();
+                }
+
+            } catch (error) {
+                console.error("Error al sincronizar:", error);
+            }
+        }
+
         function mostrarPagina() {
             if (todasLasFilas.length === 0) return;
 
@@ -299,11 +233,12 @@
                 for (let i = 0; i < filasPorPagina; i++) {
                     if (filasActuales[i]) {
                         const columnas = filasActuales[i].split(',');
+                        // Tu orden específico: Hora, Fin, Nivel, Asignatura, Docente, Lugar, Estado
                         const ordenColumnas = [0, 1, 4, 2, 3, 5, 6];
                         
                         tablaHTML += '<tr>';
                         ordenColumnas.forEach((indiceOriginal, posicionVisual) => {
-                            let dato = columnas[indiceOriginal] ? columnas[indiceOriginal].trim() : '';
+                            let dato = (columnas[indiceOriginal] || '').replace(/"/g, "").trim();
                             let claseAncho = `col-${posicionVisual + 1}`;
 
                             if (posicionVisual === 3 || posicionVisual === 4) { 
@@ -328,6 +263,7 @@
                         });
                         tablaHTML += '</tr>';
                     } else {
+                        // Fila vacía para mantener la estructura visual si hay menos de 15 filas
                         tablaHTML += '<tr style="height:60px"><td colspan="7"></td></tr>';
                     }
                 }
@@ -341,14 +277,17 @@
         }
 
         function actualizarReloj() {
-            document.getElementById('reloj').innerText = new Date().toLocaleTimeString();
+            document.getElementById('reloj').innerText = new Date().toLocaleTimeString('es-MX', { hour12: false });
         }
 
+        // Inicialización
         actualizarReloj();
         setInterval(actualizarReloj, 1000);
-        cargarDatos();
-        setInterval(cargarDatos, 120000); 
-        setInterval(mostrarPagina, 10000); 
+        
+        cargarDatos(); // Carga inicial
+        setInterval(cargarDatos, 60000); // Sincroniza con Sheets cada 1 minuto (RealTime)
+        setInterval(mostrarPagina, 10000); // Cambia página cada 10 segundos
+        
     </script>
 </body>
 </html>
