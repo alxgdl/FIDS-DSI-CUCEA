@@ -205,7 +205,7 @@
                 // Procesamos encabezados para la fecha de actualización
                 if (filasBrutas.length >= 3) {
                     const colH3 = filasBrutas[2].split(',');
-                    document.getElementById('actualizacion').innerText = `ÚLTIMA ACTUALIZACIÓN: ${(colH3[7] || "").replace(/"/g, "").trim()}`;
+                    document.getElementById('actualizacion').innerText = `ACTUALIZACIÓN: ${(colH3[7] || "").replace(/"/g, "").trim()}`;
                 }
 
                 // Guardamos TODAS las materias del día como una matriz
