@@ -237,49 +237,71 @@
             }
         }
 */
-        async function cargarDatos() {
-                    try {
-                        const respuesta = await fetch(csvUrl + '&t=' + Date.now());
-                        const texto = await respuesta.text();
-                        
-                        // 1. Convertimos el texto en un array de filas
-                        const filasBrutas = texto.split('\n').filter(f => f.trim() !== '');
+// Variable global para comparar y evitar parpadeos innecesarios
+let ultimoTextoCSV = ""; 
 
-                        // --- EXTRACTOR DE DATOS GLOBALES (H2 y H3) ---
-                        if (filasBrutas && filasBrutas.length >= 3) {
-                            try {
-                                // Extraer H2
-                                const fila2 = filasBrutas[1] || "";
-                                const columnasH2 = fila2.split(',');
-                                const datoH2 = (columnasH2[7] || "").trim();
-                                
-                                // Extraer H3
-                                const fila3 = filasBrutas[2] || "";
-                                const columnasH3 = fila3.split(',');
-                                const datoH3 = (columnasH3[7] || "").trim();
+        async function cargarDatos() {
+            try {
+                // 1. Forzamos la descarga fresca con Date.now() y headers de no-cache
+                const respuesta = await fetch(csvUrl + '&t=' + Date.now(), {
+                    cache: 'no-store',
+                    headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' }
+                });
+                
+                let texto = await respuesta.text();
+                
+                // 2. Limpieza de caracteres especiales de Google (BOM) y espacios
+                texto = texto.replace(/^\uFEFF/, "").trim();
+        
+                // 3. SI EL DATO ES IGUAL AL ANTERIOR, NO HACEMOS NADA (Evita parpadeo)
+                if (texto === ultimoTextoCSV) {
+                    console.log("Sin cambios en Sheets...");
+                    return; 
+                }
+                ultimoTextoCSV = texto;
+        
+                // 4. Ocultar suavemente antes de cambiar (Opcional, si tienes CSS de transition)
+                const contenedor = document.getElementById('contenedor-tabla'); // Ajusta al ID de tu div principal
+                if (contenedor) contenedor.style.opacity = "0.7";
+        
+                const filasBrutas = texto.split('\n').filter(f => f.trim() !== '');
+        
+                // --- EXTRACTOR DE DATOS GLOBALES (H2 y H3) ---
+                if (filasBrutas && filasBrutas.length >= 3) {
+                    try {
+                        // Extraer H2 (Fila 2, Columna 8 -> índice 7)
+                        const columnasH2 = (filasBrutas[1] || "").split(',');
+                        const datoH2 = (columnasH2[7] || "").trim();
                         
-                                // Inyectar con seguridad (verificando que el elemento existe en el HTML)
-                                const elTotal = document.getElementById('totalmaterias');
-                                const elActualizacion = document.getElementById('actualizacion');
+                        // Extraer H3 (Fila 3, Columna 8 -> índice 7)
+                        const columnasH3 = (filasBrutas[2] || "").split(',');
+                        const datoH3 = (columnasH3[7] || "").trim();
+                
+                        const elTotal = document.getElementById('totalmaterias');
+                        const elActualizacion = document.getElementById('actualizacion');
+                
+                        if (elTotal) elTotal.innerText = `MATERIAS ACTIVAS DSI: ${datoH2}`;
+                        if (elActualizacion) elActualizacion.innerText = `ÚLTIMA ACTUALIZACIÓN: ${datoH3}`;
                         
-                                if (elTotal) elTotal.innerText = `MATERIAS ACTIVAS DSI: ${datoH2}`;
-                                if (elActualizacion) elActualizacion.innerText = `ÚLTIMA ACTUALIZACIÓN: ${datoH3}`;
-                                
-                            } catch (e) {
-                                console.warn("Error procesando celdas H2/H3, pero el FIDS continúa:", e);
-                            }
-                        }
-                        
-                        // 2. Guardamos el resto para la tabla (excluyendo encabezados)
-                        todasLasFilas = filasBrutas.slice(1); 
-                        
-                        if(indicePagina === 0) mostrarPagina();
-                    } catch (error) {
-                        console.error("Error:", error);
+                    } catch (e) {
+                        console.warn("Error procesando celdas H2/H3:", e);
                     }
                 }
-
-    
+                
+                // 5. Guardamos datos y actualizamos vista
+                todasLasFilas = filasBrutas.slice(1); 
+                
+                // Llamamos a mostrarPagina y luego devolvemos la opacidad
+                mostrarPagina();
+                
+                if (contenedor) {
+                    setTimeout(() => { contenedor.style.opacity = "1"; }, 150);
+                }
+        
+            } catch (error) {
+                console.error("Error en el fetch del FIDS:", error);
+            }
+        }    
         function mostrarPagina() {
             if (todasLasFilas.length === 0) return;
 
