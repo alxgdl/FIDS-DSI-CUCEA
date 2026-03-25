@@ -120,7 +120,7 @@
         }
 
         /* --- 8. FOOTER FIJO --- */
-        .reloj-fijo { position: fixed; top: 1152px; left: 1265px; text-align: center; z-index: 100; }
+        .reloj-fijo { position: fixed; top: 1152px; left: 1285px; text-align: center; z-index: 100; }
         #reloj { font-size: 35px; font-weight: bold; color: #ffffff; line-height: 1; }
         
         .paginador-fijo { position: fixed; top: 1150px; left: 1565px; text-align: center; z-index: 100; }                
@@ -157,7 +157,7 @@
     </div>
 
     <div class="footer-info">
-        <div class="totalmaterias-fijo"><div id="totalmaterias">MATERIAS ACTIVAS: --</div></div>
+        <div class="totalmaterias-fijo"><div id="totalmaterias">MATERIAS EN PANTALLA: --</div></div>
         <div class="actualizacion-fijo"><div id="actualizacion">SINCRONIZANDO...</div></div>
         <div class="reloj-fijo"><div id="reloj">00:00:00</div></div>
         <div class="paginador-fijo"><div id="paginador">PÁGINA --</div></div>
@@ -355,7 +355,7 @@
         }
 
         function actualizarReloj() {
-            document.getElementById('reloj').innerText = new Date().toLocaleTimeString('es-MX', { hour12: false });
+            document.getElementById('reloj').innerText = new Date().toLocaleTimeString('es-MX', { hour12: true });
         }
 
         // INICIALIZADORES GENERALES
