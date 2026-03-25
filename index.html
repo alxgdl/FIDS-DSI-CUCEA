@@ -2,375 +2,153 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FIDS CUCEA - Paginado con Fade</title>
+    <title>FIDS CUCEA - Monitor de Materias</title>
     <style>
-        /* --- 1. CONFIGURACIÓN DEL FONDO --- */
+        /* Estilos base para apariencia de aeropuerto (FIDS) */
         body {
-            background-image: url('FIDSFondo4.png');
-            background-size: 1920px auto; 
-            background-position: top left;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-            background-color: rgba(0, 0, 0, 0.3); 
-            background-blend-mode: darken;
+            background-color: black;
             color: white;
-            font-family: 'Segoe UI', Arial, sans-serif;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
-            padding: 0;
+            padding: 20px;
             overflow: hidden;
         }
-
-        /* --- 2. CONTENEDORES --- */
-        #fids-header-container {
-            padding: 0 120px; 
-            margin-top: 78px;
+        #contenedor-tabla {
+            transition: opacity 0.3s ease-in-out;
         }
-
-        #fids-container {
-            margin-top: 45px; 
-            padding: 0 120px;
-            width: 100%;
+        .header-fids {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 2px solid #444;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
         }
-
-        /* EFECTO DESVANECEDOR (FADE) */
-        #tabla-datos {
-            transition: opacity 0.5s ease-in-out;
-            opacity: 1;
-        }
-
-        .fade-out {
-            opacity: 0 !important;
-        }
-
-        /* --- 3. ESTRUCTURA BASE DE TABLAS --- */
-        table {
-            border-collapse: collapse;
-            table-layout: fixed; 
-            width: 1300px;
-        }
-
-        td, th {
-            padding: 8px 10px;
-            vertical-align: middle; 
-            height: 45px; 
-            line-height: 1;
-        }
-
-        /* --- 4. ESTILOS EXCLUSIVOS DEL ENCABEZADO (Diferente a los datos) --- */
-        .tabla-encabezado {
-            background-color: transparent;
-        }
-        
-        .tabla-encabezado th {
-            color: #ffd700; /* Dorado */
-            font-size: 30px; /* Tamaño específico para títulos */
-            font-weight: 800;
-            text-transform: uppercase;
-            border-bottom: 3px solid #ffd700;
-            text-align: left;
-        }
-
-        /* Alineaciones específicas para los títulos */
-        .tabla-encabezado th:nth-child(1),
-        .tabla-encabezado th:nth-child(2),
-        .tabla-encabezado th:nth-child(3),
-        .tabla-encabezado th:nth-child(6), 
-        .tabla-encabezado th:nth-child(7) {
-            text-align: center;
-        }
-
-        /* --- 5. ESTILOS EXCLUSIVOS DE LOS DATOS --- */
-        #tabla-datos td {
-            font-size: 19px;
-            font-weight: 500;
-            color: #ffffff;
-            border-bottom: 0px solid rgba(255, 255, 255, 0.1);
-        }
-
-        /* Personalización de columnas de DATOS (sin afectar th) */
-        #tabla-datos td:nth-child(1) { text-align: center; font-size: 33px; font-weight: bold; } /* Hora */
-        #tabla-datos td:nth-child(2) { text-align: center; color: #B3E5FC; font-size: 28px; }   /* Fin */
-        #tabla-datos td:nth-child(3) { text-align: center; }                                   /* Nivel */
-        #tabla-datos td:nth-child(4) { text-align: left; color: #B3E5FC; font-weight: bold; font-size: 22px; } /* Asignatura */
-        #tabla-datos td:nth-child(5) { text-align: left; font-size: 22px; }                    /* Docente */
-        #tabla-datos td:nth-child(6) { text-align: center; font-size: 28px; font-weight: bold; } /* Lugar */
-        #tabla-datos td:nth-child(7) { text-align: center; }                                     /* Estado */
-
-        /* --- 6. CONFIGURACIÓN DE ANCHOS (Consistente para ambas tablas) --- */
-        .col-1 { width: 150px; }
-        .col-2 { width: 120px; }
-        .col-3 { width: 220px; }
-        .col-4 { width: 380px; }
-        .col-5 { width: 330px; }
-        .col-6 { width: 150px; }
-        .col-7 { width: 180px; }
-
-        /* --- 7. COMPONENTES VISUALES --- */
-        .img-estado { height: 44px; width: auto; vertical-align: middle; }
-        .img-nivel { height: 30px; width: auto; vertical-align: middle; }
-        .img-edificio { height: 44px; width: auto; vertical-align: middle; margin-right: 8px; }
-
-        @keyframes parpadeo {
-          0% { opacity: 1; }
-          50% { opacity: 0.3; }
-          100% { opacity: 1; }
-        }
-
-        .efecto-parpadeo { animation: parpadeo 2.5s infinite ease-in-out; }
-
-        .recortar-texto {
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        /* --- 8. RELOJ Y PAGINADOR --- */
-        .reloj-fijo {
-            position: fixed;
-            top: 1152px;
-            left: 1265px;
-            text-align: center;
-            z-index: 100;
-        }
-
-        #reloj {
-            font-size: 35px;
-            font-weight: bold;
-            color: #ffffff; /* #ffd700; */
-            line-height: 1;
-        }
-        
-        .paginador-fijo {
-            position: fixed;
-            top: 1150px;
-            left: 1565px;
-            text-align: center;
-            z-index: 100;
-        }                
-        #paginador {
-            font-size: 33px;
-            color: #ffffff;
-            font-weight: bold;
-            /* margin-top: 5px; */
-        } 
-
-        .totalmaterias-fijo {
-            position: fixed;
-            top: 1150px;
-            left: 145px;
-            text-align: center;
-            z-index: 100;
-        }                
-        #totalmaterias {
-            font-size: 33px;
-            color: #ffffff;
-            font-weight: bold;
-        } 
-
-        .actualizacion-fijo {
-            position: fixed;
-            top: 1150px;
-            left: 680px;
-            text-align: ceter;
-            z-index: 100;
-        }                
-        #actualizacion {
-            font-size: 33px;
-            color: #ffffff;
-            font-weight: bold;
-        }
-        
+        /* Aquí puedes agregar tus estilos de tabla y botones */
     </style>
 </head>
 <body>
 
-    <div id="fids-header-container">
-        <table class="tabla-encabezado">
-            <thead>
-                <tr>
-                    <th class="col-1">HORA</th>
-                    <th class="col-2">FIN</th>
-                    <th class="col-3">NIVEL</th>
-                    <th class="col-4">ASIGNATURA</th>
-                    <th class="col-5">DOCENTE</th>
-                    <th class="col-6">LUGAR</th>
-                    <th class="col-7">ESTADO</th>
-                </tr>
-            </thead>
+    <div class="header-fids">
+        <div id="totalmaterias">MATERIAS ACTIVAS DSI: Cargando...</div>
+        <div id="actualizacion">ÚLTIMA ACTUALIZACIÓN: --:--</div>
+    </div>
+
+    <div id="contenedor-tabla">
+        <table id="tabla-datos">
+            <tbody id="cuerpo-tabla"></tbody>
         </table>
     </div>
 
-    <div id="fids-container">
-        <div id="tabla-datos">Cargando programación...</div>
-    </div>
-
-    <div class="reloj-fijo">
-        <div id="reloj">00:00:00</div>
-        <div id="paginador" class="paginador-fijo">PÁGINA 1 de ?</div>
-        <div id="totalmaterias" class="totalmaterias-fijo">MATERIAS ACTIVAS DSI:</div>
-        <div id="actualizacion" class="actualizacion-fijo">ÚLTIMA ACTUALIZACIÓN</div>
-    </div>
-
     <script>
-        const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTtJ6ZlMM6skUMzxHY2LYmtU3WBojxBxxP1k7_exlFwS4THkhsC9OAt6Iq4NjxoXDvnugZwRzTjA9ZI/pub?gid=52319349&single=true&output=csv';
+        // --- CONFIGURACIÓN ---
+        // Usamos /export para saltar el caché de 1 hora de Google
+        const csvUrl = 'https://docs.google.com/spreadsheets/d/1TtJ6ZlMM6skUMzxHY2LYmtU3WBojxBxxP1k7_exlFwS4THkhsC9OAt6Iq4NjxoXDvnugZwRzTjA9ZI/export?format=csv&gid=52319349';
         
         const filasPorPagina = 15;
         let todasLasFilas = [];
         let indicePagina = 0;
+        let ultimoTextoCSV = ""; // Para evitar refrescos visuales si el dato es igual
 
+        // Tus diccionarios de imágenes
         const diccionarioEstados = { "EN CURSO": "BotonEncurso.png", "INICIANDO": "BotonIniciando.png", "FINALIZANDO": "BotonFinalizando.png", "PROGRAMADA": "BotonProgramada.png" };
         const diccionarioNiveles = { "T.S.U.": "botonTSU.png", "LICENCIATURA": "botonLicenciatura.png", "MAESTRIA": "botonMaestria.png", "DOCTORADO": "botonDoctorado.png" };
         const diccionarioEdificios = { "I": "EdificioI.png", "N": "EdificioN.png", "K": "EdificioK.png", "L": "EdificioL.png", "P": "EdificioP.png", "Q": "EdificioQ.png" };
-/*
-        async function cargarDatos() {
-            try {
-                const respuesta = await fetch(csvUrl + '&t=' + Date.now());
-                const texto = await respuesta.text();
-                const filasBrutas = texto.split('\n').filter(f => f.trim() !== '');
-                todasLasFilas = filasBrutas.slice(1); 
-                if(indicePagina === 0) mostrarPagina();
-            } catch (error) {
-                console.error("Error:", error);
-            }
-        }
-*/
-// Variable global para comparar y evitar parpadeos innecesarios
-let ultimoTextoCSV = ""; 
 
+        // --- FUNCIÓN PRINCIPAL: CARGA DE DATOS ---
         async function cargarDatos() {
             try {
-                // 1. Forzamos la descarga fresca con Date.now() y headers de no-cache
-                const respuesta = await fetch(csvUrl + '&t=' + Date.now(), {
+                // Forzamos petición fresca con timestamp y headers de no-cache
+                const respuesta = await fetch(`${csvUrl}&t=${Date.now()}`, {
+                    method: 'GET',
                     cache: 'no-store',
-                    headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' }
+                    headers: {
+                        'Cache-Control': 'no-cache, no-store, must-revalidate',
+                        'Pragma': 'no-cache'
+                    }
                 });
-                
+
+                if (!respuesta.ok) throw new Error("Error al conectar con Google");
+
                 let texto = await respuesta.text();
-                
-                // 2. Limpieza de caracteres especiales de Google (BOM) y espacios
-                texto = texto.replace(/^\uFEFF/, "").trim();
-        
-                // 3. SI EL DATO ES IGUAL AL ANTERIOR, NO HACEMOS NADA (Evita parpadeo)
+                texto = texto.replace(/^\uFEFF/, "").trim(); // Limpiar caracteres basura de Excel/Google
+
+                // Si los datos son idénticos a la carga anterior, no hacemos nada (evita parpadeo)
                 if (texto === ultimoTextoCSV) {
-                    console.log("Sin cambios en Sheets...");
-                    return; 
+                    console.log("Sin cambios detectados en la nube.");
+                    return;
                 }
                 ultimoTextoCSV = texto;
-        
-                // 4. Ocultar suavemente antes de cambiar (Opcional, si tienes CSS de transition)
-                const contenedor = document.getElementById('contenedor-tabla'); // Ajusta al ID de tu div principal
-                if (contenedor) contenedor.style.opacity = "0.7";
-        
+
                 const filasBrutas = texto.split('\n').filter(f => f.trim() !== '');
-        
-                // --- EXTRACTOR DE DATOS GLOBALES (H2 y H3) ---
-                if (filasBrutas && filasBrutas.length >= 3) {
-                    try {
-                        // Extraer H2 (Fila 2, Columna 8 -> índice 7)
-                        const columnasH2 = (filasBrutas[1] || "").split(',');
-                        const datoH2 = (columnasH2[7] || "").trim();
-                        
-                        // Extraer H3 (Fila 3, Columna 8 -> índice 7)
-                        const columnasH3 = (filasBrutas[2] || "").split(',');
-                        const datoH3 = (columnasH3[7] || "").trim();
-                
-                        const elTotal = document.getElementById('totalmaterias');
-                        const elActualizacion = document.getElementById('actualizacion');
-                
-                        if (elTotal) elTotal.innerText = `MATERIAS ACTIVAS DSI: ${datoH2}`;
-                        if (elActualizacion) elActualizacion.innerText = `ÚLTIMA ACTUALIZACIÓN: ${datoH3}`;
-                        
-                    } catch (e) {
-                        console.warn("Error procesando celdas H2/H3:", e);
-                    }
+
+                // --- EXTRACTOR DE ENCABEZADOS (H2 y H3 en columna 8) ---
+                if (filasBrutas.length >= 3) {
+                    const elTotal = document.getElementById('totalmaterias');
+                    const elActualizacion = document.getElementById('actualizacion');
+
+                    // Fila 2, Columna 8 (índice 7)
+                    const datoH2 = (filasBrutas[1].split(',')[7] || "").replace(/"/g, "").trim();
+                    // Fila 3, Columna 8 (índice 7)
+                    const datoH3 = (filasBrutas[2].split(',')[7] || "").replace(/"/g, "").trim();
+
+                    if (elTotal) elTotal.innerText = `MATERIAS ACTIVAS DSI: ${datoH2}`;
+                    if (elActualizacion) elActualizacion.innerText = `ÚLTIMA ACTUALIZACIÓN: ${datoH3}`;
                 }
-                
-                // 5. Guardamos datos y actualizamos vista
+
+                // Guardar datos (asumiendo que los datos reales empiezan después de encabezados o desde fila 1)
                 todasLasFilas = filasBrutas.slice(1); 
                 
-                // Llamamos a mostrarPagina y luego devolvemos la opacidad
+                // Mostrar siempre la primera página tras una carga exitosa de nuevos datos
                 mostrarPagina();
-                
-                if (contenedor) {
-                    setTimeout(() => { contenedor.style.opacity = "1"; }, 150);
-                }
-        
-            } catch (error) {
-                console.error("Error en el fetch del FIDS:", error);
-            }
-        }    
-        function mostrarPagina() {
-            if (todasLasFilas.length === 0) return;
 
-            const contenedor = document.getElementById('tabla-datos');
-            contenedor.classList.add('fade-out');
+            } catch (error) {
+                console.error("Fallo en la actualización:", error);
+            }
+        }
+
+        // --- FUNCIÓN DE RENDERIZADO ---
+        function mostrarPagina() {
+            const contenedor = document.getElementById('contenedor-tabla');
+            if (contenedor) contenedor.style.opacity = "0"; // Efecto fade out breve
 
             setTimeout(() => {
-                const totalPaginas = Math.ceil(todasLasFilas.length / filasPorPagina);
                 const inicio = indicePagina * filasPorPagina;
                 const fin = inicio + filasPorPagina;
-                const filasActuales = todasLasFilas.slice(inicio, fin);
+                const filasVisibles = todasLasFilas.slice(inicio, fin);
 
-                document.getElementById('paginador').innerText = `PÁGINA ${indicePagina + 1} de ${totalPaginas}`;
+                // Aquí construyes tu HTML de la tabla
+                let html = "";
+                filasVisibles.forEach(filaTexto => {
+                    const columnas = filaTexto.split(',');
+                    // Ejemplo de cómo usar tus diccionarios:
+                    // const imgEstado = diccionarioEstados[columnas[X]] || "default.png";
+                    
+                    html += `<tr>`;
+                    columnas.forEach(col => {
+                        html += `<td>${col.replace(/"/g, "")}</td>`;
+                    });
+                    html += `</tr>`;
+                });
 
-                let tablaHTML = '<table><tbody>';
-
-                for (let i = 0; i < filasPorPagina; i++) {
-                    if (filasActuales[i]) {
-                        const columnas = filasActuales[i].split(',');
-                        const ordenColumnas = [0, 1, 4, 2, 3, 5, 6];
-                        
-                        tablaHTML += '<tr>';
-                        ordenColumnas.forEach((indiceOriginal, posicionVisual) => {
-                            let dato = columnas[indiceOriginal] ? columnas[indiceOriginal].trim() : '';
-                            let claseAncho = `col-${posicionVisual + 1}`;
-
-                            if (posicionVisual === 3 || posicionVisual === 4) { 
-                                tablaHTML += `<td class="${claseAncho}"><div class="recortar-texto">${dato}</div></td>`;
-                            } 
-                            else if (posicionVisual === 5) { 
-                                let letra = dato.charAt(0).toUpperCase();
-                                tablaHTML += `<td class="${claseAncho}">${diccionarioEdificios[letra] ? `<img src="${diccionarioEdificios[letra]}" class="img-edificio">${dato.slice(1)}` : dato}</td>`;
-                            }
-                            else if (posicionVisual === 2) { 
-                                let nivelUpper = dato.toUpperCase();
-                                tablaHTML += `<td class="${claseAncho}">${diccionarioNiveles[nivelUpper] ? `<img src="${diccionarioNiveles[nivelUpper]}" class="img-nivel">` : dato}</td>`;
-                            }
-                            else if (posicionVisual === 6) { 
-                                let estUpper = dato.toUpperCase();
-                                let parpadea = (estUpper === "FINALIZANDO" || estUpper === "INICIANDO") ? "efecto-parpadeo" : "";
-                                tablaHTML += `<td class="${claseAncho}">${diccionarioEstados[estUpper] ? `<img src="${diccionarioEstados[estUpper]}" class="img-estado ${parpadea}">` : dato}</td>`;
-                            }
-                            else {
-                                tablaHTML += `<td class="${claseAncho}">${dato}</td>`;
-                            }
-                        });
-                        tablaHTML += '</tr>';
-                    } else {
-                        tablaHTML += '<tr style="height:60px"><td colspan="7"></td></tr>';
-                    }
-                }
-
-                tablaHTML += '</tbody></table>';
-                contenedor.innerHTML = tablaHTML;
-                contenedor.classList.remove('fade-out');
-
-                indicePagina = (indicePagina + 1) % totalPaginas;
-            }, 500);
+                document.getElementById('cuerpo-tabla').innerHTML = html;
+                if (contenedor) contenedor.style.opacity = "1"; // Efecto fade in
+            }, 300);
         }
 
-        function actualizarReloj() {
-            document.getElementById('reloj').innerText = new Date().toLocaleTimeString();
-        }
+        // --- CICLO DE PAGINACIÓN AUTOMÁTICA ---
+        setInterval(() => {
+            if (todasLasFilas.length > filasPorPagina) {
+                indicePagina = (indicePagina + 1) % Math.ceil(todasLasFilas.length / filasPorPagina);
+                mostrarPagina();
+            }
+        }, 15000); // Cambia de página cada 15 segundos
 
-        actualizarReloj();
-        setInterval(actualizarReloj, 1000);
+        // --- CICLO DE RECARGA DE DATOS (Cada minuto) ---
+        setInterval(cargarDatos, 60000);
+
+        // Carga inicial al abrir
         cargarDatos();
-        setInterval(cargarDatos, 120000); 
-        setInterval(mostrarPagina, 10000); 
+
     </script>
 </body>
 </html>
