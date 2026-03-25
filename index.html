@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FIDS CUCEA - Paginado con Fade RealTime</title>
+    <title>FIDS CUCEA - Motor de Tiempo JS</title>
     <style>
         /* --- 1. CONFIGURACIÓN DEL FONDO --- */
         body {
@@ -157,74 +157,154 @@
     </div>
 
     <div class="footer-info">
-        <div class="totalmaterias-fijo"><div id="totalmaterias">MATERIAS: --</div></div>
+        <div class="totalmaterias-fijo"><div id="totalmaterias">MATERIAS ACTIVAS: --</div></div>
         <div class="actualizacion-fijo"><div id="actualizacion">SINCRONIZANDO...</div></div>
         <div class="reloj-fijo"><div id="reloj">00:00:00</div></div>
         <div class="paginador-fijo"><div id="paginador">PÁGINA --</div></div>
     </div>
 
     <script>
-        // Esta es la liga de exportación real basada en tu enlace de compartir
+        // Enlace público CSV (Ya no importa el caché severo, porque evaluamos la hora localmente)
         const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTtJ6ZlMM6skUMzxHY2LYmtU3WBojxBxxP1k7_exlFwS4THkhsC9OAt6Iq4NjxoXDvnugZwRzTjA9ZI/pub?gid=52319349&single=true&output=csv';
         
         const filasPorPagina = 15;
-        let todasLasFilas = [];
+        let todasLasMateriasDelDia = []; // Almacenará la matriz maestra del día
+        let materiasFiltradas = [];      // Almacenará solo las que se deben mostrar
         let indicePagina = 0;
-        let ultimoContenidoCSV = ""; 
 
         const diccionarioEstados = { "EN CURSO": "BotonEncurso.png", "INICIANDO": "BotonIniciando.png", "FINALIZANDO": "BotonFinalizando.png", "PROGRAMADA": "BotonProgramada.png" };
         const diccionarioNiveles = { "T.S.U.": "botonTSU.png", "LICENCIATURA": "botonLicenciatura.png", "MAESTRIA": "botonMaestria.png", "DOCTORADO": "botonDoctorado.png" };
         const diccionarioEdificios = { "I": "EdificioI.png", "N": "EdificioN.png", "K": "EdificioK.png", "L": "EdificioL.png", "P": "EdificioP.png", "Q": "EdificioQ.png" };
 
+        // 1. FUNCIÓN MATEMÁTICA PARA HORAS: Convierte "9:00 AM" a minutos (ej. 540)
+        function convertirAMinutos(horaString) {
+            if (!horaString) return -1;
+            const partes = horaString.trim().split(/\s+/);
+            if (partes.length < 2) return -1;
+            
+            const [horaMin, ampm] = partes;
+            const partesTiempo = horaMin.split(':');
+            let h = parseInt(partesTiempo[0], 10);
+            let m = parseInt(partesTiempo[1], 10);
+
+            if (ampm.toUpperCase() === 'PM' && h !== 12) h += 12;
+            if (ampm.toUpperCase() === 'AM' && h === 12) h = 0;
+
+            return (h * 60) + m;
+        }
+
+        // 2. FUNCIÓN DE DESCARGA: Se ejecuta 1 vez por hora
         async function cargarDatos() {
             try {
-                // Fetch con Cache-Buster dinámico para datos frescos cada 60s
-                const respuesta = await fetch(`${csvUrl}&t=${Date.now()}`, {
-                    cache: "no-store",
-                    headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' }
-                });
-                
+                const respuesta = await fetch(`${csvUrl}&t=${Date.now()}`);
                 const texto = await respuesta.text();
                 const textoLimpio = texto.replace(/^\uFEFF/, "").trim();
-
-                // Evitar procesar si los datos no han cambiado en el Sheets
-                if (textoLimpio === ultimoContenidoCSV) return;
-                ultimoContenidoCSV = textoLimpio;
-
+                
                 const filasBrutas = textoLimpio.split('\n').filter(f => f.trim() !== '');
 
-                // Datos Globales (Encabezados H2 y H3)
+                // Procesamos encabezados para la fecha de actualización
                 if (filasBrutas.length >= 3) {
-                    const colH2 = filasBrutas[1].split(',');
                     const colH3 = filasBrutas[2].split(',');
-                    document.getElementById('totalmaterias').innerText = `MATERIAS ACTIVAS DSI: ${(colH2[7] || "").replace(/"/g, "").trim()}`;
                     document.getElementById('actualizacion').innerText = `ÚLTIMA ACTUALIZACIÓN: ${(colH3[7] || "").replace(/"/g, "").trim()}`;
                 }
 
-                // Guardar datos (Saltamos la primera fila de nombres de columna)
-                todasLasFilas = filasBrutas.slice(1); 
-                
-                // Si es la primera carga, mostramos de inmediato
-                if (document.getElementById('tabla-datos').innerText.includes("Iniciando")) {
-                    mostrarPagina();
-                }
+                // Guardamos TODAS las materias del día como una matriz
+                todasLasMateriasDelDia = filasBrutas.slice(1).map(fila => {
+                    return fila.split(',').map(celda => celda.replace(/"/g, "").trim());
+                });
+
+                // Disparamos el motor de tiempo inmediatamente
+                procesarMotorDeTiempo();
 
             } catch (error) {
-                console.error("Error al sincronizar:", error);
+                console.error("Error al descargar itinerario del día:", error);
             }
         }
 
+        // 3. MOTOR DE TIEMPO: Se ejecuta cada minuto y aplica tu lógica
+        function procesarMotorDeTiempo() {
+            if (todasLasMateriasDelDia.length === 0) return;
+
+            const ahora = new Date();
+            const minActuales = (ahora.getHours() * 60) + ahora.getMinutes();
+            
+            let materiasTemporales = [];
+            let proximaHoraInicio = 9999; // Buscaremos el bloque más cercano en el futuro
+
+            // PASO A: Encontrar cuál es el siguiente "Bloque Programado"
+            todasLasMateriasDelDia.forEach(columnas => {
+                const tInicio = convertirAMinutos(columnas[0]); // Columna 1
+                if (tInicio > minActuales && tInicio < proximaHoraInicio) {
+                    proximaHoraInicio = tInicio;
+                }
+            });
+
+            // PASO B: Evaluar estado materia por materia
+            todasLasMateriasDelDia.forEach(columnas => {
+                // Hacemos una copia para no alterar la matriz maestra
+                let filaEvaluada = [...columnas]; 
+                
+                const tInicio = convertirAMinutos(filaEvaluada[0]);
+                const tFin = convertirAMinutos(filaEvaluada[1]);
+
+                if (tInicio === -1 || tFin === -1) return;
+
+                // Si ya se acabó la clase, la ignoramos (ni entra a la lista)
+                if (minActuales >= tFin) return;
+
+                let estadoFinal = "";
+
+                // LÓGICA DE TIEMPOS
+                if (minActuales >= tInicio && minActuales < tFin) {
+                    // La clase está sucediendo en este momento
+                    if (minActuales < tInicio + 20) {
+                        estadoFinal = "INICIANDO";
+                    } else if (minActuales >= tFin - 20) {
+                        estadoFinal = "FINALIZANDO";
+                    } else {
+                        estadoFinal = "EN CURSO";
+                    }
+                } else if (tInicio === proximaHoraInicio) {
+                    // Es la hora más próxima donde empiezan clases
+                    estadoFinal = "PROGRAMADA";
+                }
+
+                // Si se le asignó un estado, la agregamos a la pantalla y reescribimos la columna 6
+                if (estadoFinal !== "") {
+                    filaEvaluada[6] = estadoFinal; 
+                    materiasTemporales.push(filaEvaluada);
+                }
+            });
+
+            // Actualizamos la lista oficial a renderizar
+            if (materiasFiltradas.length !== materiasTemporales.length) {
+                indicePagina = 0; // Reiniciar paginador si cambió la cantidad de materias mostradas
+            }
+            
+            materiasFiltradas = materiasTemporales;
+            document.getElementById('totalmaterias').innerText = `MATERIAS EN PANTALLA: ${materiasFiltradas.length}`;
+
+            // Si es la primera vez que inicia, forzamos mostrar
+            if (document.getElementById('tabla-datos').innerText.includes("Iniciando")) {
+                mostrarPagina();
+            }
+        }
+
+        // 4. RENDERIZADO VISUAL
         function mostrarPagina() {
-            if (todasLasFilas.length === 0) return;
+            if (materiasFiltradas.length === 0) {
+                document.getElementById('tabla-datos').innerHTML = "<div style='text-align:center; padding: 50px; font-size: 30px;'>No hay materias activas en este momento.</div>";
+                return;
+            }
 
             const contenedor = document.getElementById('tabla-datos');
             contenedor.classList.add('fade-out');
 
             setTimeout(() => {
-                const totalPaginas = Math.ceil(todasLasFilas.length / filasPorPagina);
+                const totalPaginas = Math.ceil(materiasFiltradas.length / filasPorPagina);
                 const inicio = indicePagina * filasPorPagina;
                 const fin = inicio + filasPorPagina;
-                const filasActuales = todasLasFilas.slice(inicio, fin);
+                const filasActuales = materiasFiltradas.slice(inicio, fin);
 
                 document.getElementById('paginador').innerText = `PÁGINA ${indicePagina + 1} de ${totalPaginas}`;
 
@@ -232,13 +312,12 @@
 
                 for (let i = 0; i < filasPorPagina; i++) {
                     if (filasActuales[i]) {
-                        const columnas = filasActuales[i].split(',');
-                        // Tu orden específico: Hora, Fin, Nivel, Asignatura, Docente, Lugar, Estado
+                        const columnas = filasActuales[i];
                         const ordenColumnas = [0, 1, 4, 2, 3, 5, 6];
                         
                         tablaHTML += '<tr>';
                         ordenColumnas.forEach((indiceOriginal, posicionVisual) => {
-                            let dato = (columnas[indiceOriginal] || '').replace(/"/g, "").trim();
+                            let dato = columnas[indiceOriginal] || '';
                             let claseAncho = `col-${posicionVisual + 1}`;
 
                             if (posicionVisual === 3 || posicionVisual === 4) { 
@@ -263,7 +342,6 @@
                         });
                         tablaHTML += '</tr>';
                     } else {
-                        // Fila vacía para mantener la estructura visual si hay menos de 15 filas
                         tablaHTML += '<tr style="height:60px"><td colspan="7"></td></tr>';
                     }
                 }
@@ -280,13 +358,14 @@
             document.getElementById('reloj').innerText = new Date().toLocaleTimeString('es-MX', { hour12: false });
         }
 
-        // Inicialización
+        // INICIALIZADORES GENERALES
         actualizarReloj();
-        setInterval(actualizarReloj, 1000);
+        setInterval(actualizarReloj, 1000); // Reloj del Footer
         
-        cargarDatos(); // Carga inicial
-        setInterval(cargarDatos, 60000); // Sincroniza con Sheets cada 1 minuto (RealTime)
-        setInterval(mostrarPagina, 10000); // Cambia página cada 10 segundos
+        cargarDatos(); 
+        setInterval(cargarDatos, 3600000); // Se trae la lista maestra 1 VEZ POR HORA
+        setInterval(procesarMotorDeTiempo, 60000); // Recalcula los estados CADA MINUTO
+        setInterval(mostrarPagina, 10000); // Da la vuelta a la página CADA 10 SEGUNDOS
         
     </script>
 </body>
