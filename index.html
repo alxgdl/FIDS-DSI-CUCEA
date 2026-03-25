@@ -2,153 +2,123 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>FIDS CUCEA - Monitor de Materias</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FIDS CUCEA</title>
     <style>
-        /* Estilos base para apariencia de aeropuerto (FIDS) */
-        body {
-            background-color: black;
-            color: white;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            overflow: hidden;
-        }
-        #contenedor-tabla {
-            transition: opacity 0.3s ease-in-out;
-        }
-        .header-fids {
-            display: flex;
-            justify-content: space-between;
-            border-bottom: 2px solid #444;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-        }
-        /* Aquí puedes agregar tus estilos de tabla y botones */
+        body { background-color: #000; color: #fff; font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+        .header { display: flex; justify-content: space-between; border-bottom: 2px solid #333; padding-bottom: 10px; margin-bottom: 20px; font-weight: bold; font-size: 1.2em; }
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; color: #aaa; text-transform: uppercase; font-size: 0.8em; padding: 10px; }
+        td { padding: 15px 10px; border-bottom: 1px solid #222; font-size: 1.1em; }
+        .status-img { height: 30px; } /* Ajusta segun tus imagenes */
+        #contenedor-tabla { transition: opacity 0.5s; }
     </style>
 </head>
 <body>
 
-    <div class="header-fids">
-        <div id="totalmaterias">MATERIAS ACTIVAS DSI: Cargando...</div>
-        <div id="actualizacion">ÚLTIMA ACTUALIZACIÓN: --:--</div>
+    <div class="header">
+        <div id="totalmaterias">Cargando materias...</div>
+        <div id="actualizacion">Sincronizando...</div>
     </div>
 
     <div id="contenedor-tabla">
-        <table id="tabla-datos">
-            <tbody id="cuerpo-tabla"></tbody>
+        <table>
+            <thead>
+                <tr>
+                    <th>Hora</th>
+                    <th>Materia / Profesor</th>
+                    <th>Aula</th>
+                    <th>Edificio</th>
+                    <th>Estatus</th>
+                </tr>
+            </thead>
+            <tbody id="cuerpo-tabla">
+                </tbody>
         </table>
     </div>
 
     <script>
-        // --- CONFIGURACIÓN ---
-        // Usamos /export para saltar el caché de 1 hora de Google
+        // URL de exportación directa (Tiempo real)
         const csvUrl = 'https://docs.google.com/spreadsheets/d/1TtJ6ZlMM6skUMzxHY2LYmtU3WBojxBxxP1k7_exlFwS4THkhsC9OAt6Iq4NjxoXDvnugZwRzTjA9ZI/export?format=csv&gid=52319349';
         
         const filasPorPagina = 15;
         let todasLasFilas = [];
         let indicePagina = 0;
-        let ultimoTextoCSV = ""; // Para evitar refrescos visuales si el dato es igual
 
-        // Tus diccionarios de imágenes
-        const diccionarioEstados = { "EN CURSO": "BotonEncurso.png", "INICIANDO": "BotonIniciando.png", "FINALIZANDO": "BotonFinalizando.png", "PROGRAMADA": "BotonProgramada.png" };
-        const diccionarioNiveles = { "T.S.U.": "botonTSU.png", "LICENCIATURA": "botonLicenciatura.png", "MAESTRIA": "botonMaestria.png", "DOCTORADO": "botonDoctorado.png" };
-        const diccionarioEdificios = { "I": "EdificioI.png", "N": "EdificioN.png", "K": "EdificioK.png", "L": "EdificioL.png", "P": "EdificioP.png", "Q": "EdificioQ.png" };
+        // Diccionarios (Asegúrate de que los archivos .png estén en la misma carpeta que este HTML)
+        const dicEstados = { "EN CURSO": "BotonEncurso.png", "INICIANDO": "BotonIniciando.png", "FINALIZANDO": "BotonFinalizando.png", "PROGRAMADA": "BotonProgramada.png" };
+        const dicEdificios = { "I": "EdificioI.png", "N": "EdificioN.png", "K": "EdificioK.png", "L": "EdificioL.png", "P": "EdificioP.png", "Q": "EdificioQ.png" };
 
-        // --- FUNCIÓN PRINCIPAL: CARGA DE DATOS ---
         async function cargarDatos() {
             try {
-                // Forzamos petición fresca con timestamp y headers de no-cache
-                const respuesta = await fetch(`${csvUrl}&t=${Date.now()}`, {
-                    method: 'GET',
-                    cache: 'no-store',
-                    headers: {
-                        'Cache-Control': 'no-cache, no-store, must-revalidate',
-                        'Pragma': 'no-cache'
-                    }
-                });
-
-                if (!respuesta.ok) throw new Error("Error al conectar con Google");
-
-                let texto = await respuesta.text();
-                texto = texto.replace(/^\uFEFF/, "").trim(); // Limpiar caracteres basura de Excel/Google
-
-                // Si los datos son idénticos a la carga anterior, no hacemos nada (evita parpadeo)
-                if (texto === ultimoTextoCSV) {
-                    console.log("Sin cambios detectados en la nube.");
-                    return;
-                }
-                ultimoTextoCSV = texto;
-
-                const filasBrutas = texto.split('\n').filter(f => f.trim() !== '');
-
-                // --- EXTRACTOR DE ENCABEZADOS (H2 y H3 en columna 8) ---
-                if (filasBrutas.length >= 3) {
-                    const elTotal = document.getElementById('totalmaterias');
-                    const elActualizacion = document.getElementById('actualizacion');
-
-                    // Fila 2, Columna 8 (índice 7)
-                    const datoH2 = (filasBrutas[1].split(',')[7] || "").replace(/"/g, "").trim();
-                    // Fila 3, Columna 8 (índice 7)
-                    const datoH3 = (filasBrutas[2].split(',')[7] || "").replace(/"/g, "").trim();
-
-                    if (elTotal) elTotal.innerText = `MATERIAS ACTIVAS DSI: ${datoH2}`;
-                    if (elActualizacion) elActualizacion.innerText = `ÚLTIMA ACTUALIZACIÓN: ${datoH3}`;
-                }
-
-                // Guardar datos (asumiendo que los datos reales empiezan después de encabezados o desde fila 1)
-                todasLasFilas = filasBrutas.slice(1); 
+                // El timestamp '&t=' es vital para saltar el caché de 1 hora
+                const r = await fetch(csvUrl + '&t=' + Date.now());
+                if (!r.ok) throw new Error("Error de red");
                 
-                // Mostrar siempre la primera página tras una carga exitosa de nuevos datos
-                mostrarPagina();
+                const texto = await r.text();
+                const filas = texto.split('\n').map(f => f.split(',')).filter(f => f.length > 1);
 
-            } catch (error) {
-                console.error("Fallo en la actualización:", error);
+                // --- PROCESAR ENCABEZADOS (H2 y H3 están en la columna 8 de las primeras filas) ---
+                if (filas.length > 2) {
+                    document.getElementById('totalmaterias').innerText = "MATERIAS ACTIVAS: " + (filas[1][7] || "0").replace(/"/g, "");
+                    document.getElementById('actualizacion').innerText = "ACTUALIZADO: " + (filas[2][7] || "--:--").replace(/"/g, "");
+                }
+
+                // --- FILTRAR MATERIAS (Saltamos las filas de encabezado de tu Sheet) ---
+                // Ajusta el '3' si tus datos reales empiezan en otra fila
+                todasLasFilas = filas.slice(1); 
+                
+                renderizar();
+            } catch (e) {
+                console.error("Falla al cargar:", e);
+                document.getElementById('totalmaterias').innerText = "Error de conexión con Google Sheets";
             }
         }
 
-        // --- FUNCIÓN DE RENDERIZADO ---
-        function mostrarPagina() {
-            const contenedor = document.getElementById('contenedor-tabla');
-            if (contenedor) contenedor.style.opacity = "0"; // Efecto fade out breve
+        function renderizar() {
+            const cuerpo = document.getElementById('cuerpo-tabla');
+            const inicio = indicePagina * filasPorPagina;
+            const fin = inicio + filasPorPagina;
+            const bloque = todasLasFilas.slice(inicio, fin);
 
-            setTimeout(() => {
-                const inicio = indicePagina * filasPorPagina;
-                const fin = inicio + filasPorPagina;
-                const filasVisibles = todasLasFilas.slice(inicio, fin);
+            let html = "";
+            bloque.forEach(col => {
+                // Limpiamos comillas que pone Google
+                const hora = col[0]?.replace(/"/g, "") || "";
+                const materiaProfesor = col[1]?.replace(/"/g, "") || ""; // Asumiendo que combinaste materia/prof en Sheets
+                const aula = col[2]?.replace(/"/g, "") || "";
+                const edificioCod = col[3]?.replace(/"/g, "").trim() || "";
+                const estadoCod = col[4]?.replace(/"/g, "").trim() || "";
 
-                // Aquí construyes tu HTML de la tabla
-                let html = "";
-                filasVisibles.forEach(filaTexto => {
-                    const columnas = filaTexto.split(',');
-                    // Ejemplo de cómo usar tus diccionarios:
-                    // const imgEstado = diccionarioEstados[columnas[X]] || "default.png";
-                    
-                    html += `<tr>`;
-                    columnas.forEach(col => {
-                        html += `<td>${col.replace(/"/g, "")}</td>`;
-                    });
-                    html += `</tr>`;
-                });
+                // Buscamos imágenes en diccionarios
+                const imgEdificio = dicEdificios[edificioCod] ? `<img src="${dicEdificios[edificioCod]}" height="30">` : edificioCod;
+                const imgEstado = dicEstados[estadoCod] ? `<img src="${dicEstados[estadoCod]}" height="30">` : estadoCod;
 
-                document.getElementById('cuerpo-tabla').innerHTML = html;
-                if (contenedor) contenedor.style.opacity = "1"; // Efecto fade in
-            }, 300);
+                html += `<tr>
+                    <td style="color: #00ff00; font-weight: bold;">${hora}</td>
+                    <td>${materiaProfesor}</td>
+                    <td style="text-align: center;">${aula}</td>
+                    <td style="text-align: center;">${imgEdificio}</td>
+                    <td>${imgEstado}</td>
+                </tr>`;
+            });
+
+            cuerpo.innerHTML = html;
         }
 
-        // --- CICLO DE PAGINACIÓN AUTOMÁTICA ---
+        // Rotación de páginas cada 15 segundos
         setInterval(() => {
             if (todasLasFilas.length > filasPorPagina) {
                 indicePagina = (indicePagina + 1) % Math.ceil(todasLasFilas.length / filasPorPagina);
-                mostrarPagina();
+                renderizar();
             }
-        }, 15000); // Cambia de página cada 15 segundos
+        }, 15000);
 
-        // --- CICLO DE RECARGA DE DATOS (Cada minuto) ---
+        // Recarga de datos de Google cada 60 segundos
         setInterval(cargarDatos, 60000);
 
-        // Carga inicial al abrir
+        // Carga inicial
         cargarDatos();
-
     </script>
 </body>
 </html>
