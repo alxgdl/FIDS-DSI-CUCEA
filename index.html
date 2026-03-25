@@ -90,7 +90,7 @@
         #tabla-datos td:nth-child(3) { text-align: center; }                                   
         #tabla-datos td:nth-child(4) { text-align: left; color: #B3E5FC; font-weight: bold; font-size: 22px; } 
         #tabla-datos td:nth-child(5) { text-align: left; font-size: 22px; }                    
-        #tabla-datos td:nth-child(6) { text-align: center; font-size: 28px; font-weight: bold; } 
+        #tabla-datos td:nth-child(6) { text-align: center; font-size: 33px; font-weight: bold; } 
         #tabla-datos td:nth-child(7) { text-align: center; }                                     
 
         .col-1 { width: 150px; }
@@ -141,7 +141,7 @@
         <table class="tabla-encabezado">
             <thead>
                 <tr>
-                    <th class="col-1">HORA</th>
+                    <th class="col-1">INICIO</th>
                     <th class="col-2">FIN</th>
                     <th class="col-3">NIVEL</th>
                     <th class="col-4">ASIGNATURA</th>
@@ -356,7 +356,7 @@
                             } 
                             else if (posicionVisual === 5) { 
                                 let letra = dato.charAt(0).toUpperCase();
-                                tablaHTML += `<td class="${claseAncho}">${diccionarioEdificios[letra] ? `<img src="${diccionarioEdificios[letra]}" class="img-edificio">${dato.slice(1)}` : dato}</td>`;
+                                tablaHTML += `<td class="${claseAncho}">${diccionarioEdificios[letra] ? `<img src="${diccionarioEdificios[letra]}" class="img-edificio">${dato.slice(2)}` : dato}</td>`;
                             }
                             else if (posicionVisual === 2) { 
                                 let nivelUpper = dato.toUpperCase();
