@@ -5,20 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FIDS CUCEA - Motor de Tiempo JS</title>
     <style>
-        /* --- 1. CONFIGURACIÓN DEL FONDO --- */
-        body {
-            background-image: url('FIDSFondo4.png');
-            background-size: 1920px auto; 
-            background-position: top left;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-            background-color: #000; 
-            color: white;
-            font-family: 'Segoe UI', Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-        }
+    /* --- 1. CONFIGURACIÓN DEL FONDO --- */
+            body {
+                /* Aquí está la magia: Una capa negra al 60% de opacidad sobre la imagen */
+                background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)), url('FIDSFondo4.png');
+                background-size: 1920px auto; 
+                background-position: top left;
+                background-repeat: no-repeat;
+                background-attachment: fixed;
+                background-color: #000; /* Se queda como respaldo */
+                color: white;
+                font-family: 'Segoe UI', Arial, sans-serif;
+                margin: 0;
+                padding: 0;
+                overflow: hidden;
+            }
 
         /* --- 2. CONTENEDORES --- */
         #fids-header-container {
