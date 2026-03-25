@@ -120,7 +120,7 @@
         }
 
         /* --- 8. FOOTER FIJO --- */
-        .reloj-fijo { position: fixed; top: 1146px; left: 1265px; text-align: center; z-index: 100; }
+        .reloj-fijo { position: fixed; top: 1150px; left: 1265px; text-align: center; z-index: 100; }
         #reloj { font-size: 35px; font-weight: bold; color: #ffffff; line-height: 1; }
         
         .paginador-fijo { position: fixed; top: 1150px; left: 1565px; text-align: center; z-index: 100; }                
@@ -202,12 +202,42 @@
                 
                 const filasBrutas = textoLimpio.split('\n').filter(f => f.trim() !== '');
 
+
+
+                // Procesamos encabezados para rescatar datos de las celdas H1, H2 y H3
+                if (filasBrutas.length >= 3) {
+                    
+                    // 1. Rescatar celda H1 (Fila 1, índice 0)
+                    const colH1 = filasBrutas[0].split(',');
+                    const valorH1 = (colH1[7] || "").replace(/"/g, "").trim();
+                    
+                    // 2. Rescatar celda H2 (Fila 2, índice 1)
+                    const colH2 = filasBrutas[1].split(',');
+                    const valorH2 = (colH2[7] || "").replace(/"/g, "").trim();
+                
+                    // 3. Rescatar celda H3 (Fila 3, índice 2) - La que ya tenías
+                    const colH3 = filasBrutas[2].split(',');
+                    const valorH3 = (colH3[7] || "").replace(/"/g, "").trim();
+                
+                    // 4. Mandar los datos al HTML
+                    // Asegúrate de crear elementos con id="dato-h1" y id="dato-h2" en tu HTML
+                    
+                    const elementoH1 = document.getElementById('dato-h1');
+                    if (elementoH1) elementoH1.innerText = valorH1; // O puedes ponerle texto antes como `Dato 1: ${valorH1}`
+                
+                    const elementoH2 = document.getElementById('dato-h2');
+                    if (elementoH2) elementoH2.innerText = valorH2;
+                
+                    const elementoH3 = document.getElementById('actualizacion');
+                    if (elementoH3) elementoH3.innerText = `ACT: ${valorH3}`;
+                }
+/*       
                 // Procesamos encabezados para la fecha de actualización
                 if (filasBrutas.length >= 3) {
                     const colH3 = filasBrutas[2].split(',');
                     document.getElementById('actualizacion').innerText = `ACT: ${(colH3[7] || "").replace(/"/g, "").trim()}`;
                 }
-
+*/
                 // Guardamos TODAS las materias del día como una matriz
                 todasLasMateriasDelDia = filasBrutas.slice(1).map(fila => {
                     return fila.split(',').map(celda => celda.replace(/"/g, "").trim());
